@@ -1,0 +1,24 @@
+[33mfe3f97e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: Branch: renamed refs/heads/main to refs/heads/main
+[33mfe3f97e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{2}: Branch: renamed refs/heads/main to refs/heads/main
+[33mfe3f97e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{4}: commit: Add emp room meeting payment backend
+[33m7eaa902[m HEAD@{5}: Branch: renamed refs/heads/main to refs/heads/main
+[33m7eaa902[m HEAD@{7}: commit: update menu image
+[33m0246c06[m HEAD@{8}: Branch: renamed refs/heads/main to refs/heads/main
+[33m0246c06[m HEAD@{10}: commit (merge): update logout button and adjust messageApi
+[33m9013fce[m HEAD@{11}: Branch: renamed refs/heads/main to refs/heads/main
+[33m9013fce[m HEAD@{13}: commit: First commit
+[33md8095b5[m HEAD@{14}: Branch: renamed refs/heads/main to refs/heads/main
+[33md8095b5[m HEAD@{16}: commit: updatet
+[33m231753c[m HEAD@{17}: Branch: renamed refs/heads/main to refs/heads/main
+[33m231753c[m HEAD@{19}: commit (merge): add payment
+[33m40473d4[m HEAD@{20}: Branch: renamed refs/heads/main to refs/heads/main
+[33m40473d4[m HEAD@{22}: commit (merge): add payment
+[33m299a217[m HEAD@{23}: Branch: renamed refs/heads/main to refs/heads/main
+[33m299a217[m HEAD@{25}: commit: add payment
+[33mb408bec[m HEAD@{26}: Branch: renamed refs/heads/main to refs/heads/main
+[33mb408bec[m HEAD@{28}: commit (merge): edit name
+[33mfc224c8[m HEAD@{29}: Branch: renamed refs/heads/main to refs/heads/main
+[33mfc224c8[m HEAD@{31}: Branch: renamed refs/heads/main to refs/heads/main
+[33mfc224c8[m HEAD@{33}: commit: edit name
+[33m764bf01[m HEAD@{34}: Branch: renamed refs/heads/master to refs/heads/main
+[33m764bf01[m HEAD@{36}: commit (initial): first commit

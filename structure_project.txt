@@ -1,0 +1,28 @@
+.
+└── project-sa67/
+    ├── fronend/
+    │   ├── ...
+    │   └── src/
+    │       ├── โปรเจคของแต่ละคน เช่น
+    │       ├── room/
+    │       │   └── ...
+    │       ├── meeting room/
+    │       │   └── ...
+    │       ├── food service/
+    │       │   └── ...
+    │       ├── employee/
+    │       │   └── ...
+    │       ├── payment/
+    │       │   └── ...
+    │       ├── app.tsx (app.tsx ตรงนี้จะเป็นส่วนที่เอาไฟล์ fronend แต่ละคนมารวมกัน)
+    │       └── main.tsx
+    └── backend/
+        ├── controller/
+        │   └── ...
+        ├── config/
+        │   └── db.go (ไฟล์ db.go จะเป็นไฟล์ที่รวม SetupDatabase ของแต่ละคน ซึ่งในไฟล์ DB.go ของแต่ละคน จะมีไว้ set ข้อมูลเริ่มตันของ project)
+        ├── entity/
+        │   └── ...
+        ├── go.mod (ถ้าเป็นไปได้อยากให้ชื่อ module เป็น project-sa67)
+        ├── go.sum
+        └── main.go (ใน main.go จะรวม API controller ของแต่ละคนไว้)
