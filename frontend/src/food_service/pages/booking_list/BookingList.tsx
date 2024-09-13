@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- Add this
+import { useNavigate, useLocation  } from 'react-router-dom'; // <-- Add this
 import { Col, Divider } from 'antd';
 import { MdBedroomParent } from "react-icons/md";
 import { BookingInterface } from '../../interfaces/IBooking';
@@ -24,6 +24,8 @@ const formatDate = (dateString: string) => {
 const BookingList: React.FC<BookingProps> = ({ onBookingSelect }) => {
   const [booking, setBooking] = useState<BookingInterface[]>([]);
   const navigate = useNavigate(); // <-- Add this
+  const location = useLocation();
+
 
   const fetchBooking = async () => {
     try {
@@ -59,7 +61,7 @@ const BookingList: React.FC<BookingProps> = ({ onBookingSelect }) => {
                 onClick={() => {
                   if (book.ID !== undefined) {
                     onBookingSelect(book.ID);
-                    navigate(`/structure/${book.ID}`); // <-- Navigate to Structure with bookingID
+                    navigate(`${location.pathname}/structure/${book.ID}`);
                   }
                 }}
               >

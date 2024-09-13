@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Table, Button, Input, Select, Tooltip, Modal, Divider, Row, Col, Space, UploadFile, UploadProps, GetProp } from 'antd';
 import { Upload, message } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { PlusOutlined } from "@ant-design/icons";
-import { useNavigate } from 'react-router-dom';
 import { MenuInterface } from '../../interfaces/IMenu';
 import { MealInterface } from '../../interfaces/IMeal';
 import { FoodCategoryInterface } from '../../interfaces/IFoodCategory';
@@ -27,6 +27,8 @@ const Edit: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   // const [showCreate, setShowCreate] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const fetchData = async () => {
     try {
@@ -300,7 +302,7 @@ const Edit: React.FC = () => {
               icon={<PlusOutlined />}
               onClick={() => {
                 // openCreatePage();
-                navigate(`/create-menu/`);
+                navigate(`${location.pathname}/create-menu/`);
               }}
               
               style={{marginRight: '20px'}}

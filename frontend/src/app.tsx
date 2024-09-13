@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-import { PieChartOutlined, UserOutlined, TableOutlined, BookOutlined } from '@ant-design/icons';
-import { Layout, Menu, MenuProps, theme } from 'antd';
-import { MdFastfood } from "react-icons/md";
-import { MdOutlinePayment } from "react-icons/md";
-import { MdOutlineBedroomParent } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { PieChartOutlined, UserOutlined, TableOutlined } from '@ant-design/icons';
+import { Button, Layout, Menu, MenuProps, theme } from 'antd';
+import { MdFastfood, MdOutlinePayment, MdOutlineBedroomParent, MdMeetingRoom } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
-import { MdMeetingRoom } from "react-icons/md";
-import Structure from './food_service/pages/structure/Structure';
-import BookingList from './food_service/pages/booking_list/BookingList';
-import Edit from './food_service/pages/edit/Edit';
-import Create from './food_service/pages/create/Create';
-import Home from './employee/Home';
-import Payment from './payment/payment';
-import Receipt from './payment/receipt/receipt';
-// import './index.css'
+import { IoReceiptOutline } from "react-icons/io5";
+import logo from "./assets/logo.png";
+import './index.css'
 
 const { Sider, Content } = Layout;
 
@@ -35,53 +28,52 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/">Dashboard</Link>, '1', <PieChartOutlined />),
-  getItem(<Link to="/room">Room</Link>, '2', <MdOutlineBedroomParent />),
-  getItem(<Link to="/meeting-room">Meeting Room</Link>, '3', <MdMeetingRoom/>),
-  getItem('Food', 'sub1', <MdFastfood />, [
-    getItem(<Link to="/food-service">Food Service</Link>, '4', <BookOutlined />),
-    getItem(<Link to="/manage-data">Manage Data</Link>, '5', <TableOutlined />),
+  getItem(<Link to="/login/dashboard">Dashboard</Link>, '1', <PieChartOutlined />),
+  getItem(<Link to="/login/room">Room</Link>, '2', <MdOutlineBedroomParent />),
+  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '3', <MdMeetingRoom/>),
+  getItem('Food', 'sub1', undefined, [
+    getItem(<Link to="/login/food-service">Food Service</Link>, '4', <MdFastfood />),
+    getItem(<Link to="/login/manage-data">Manage Data</Link>, '5', <TableOutlined />),
   ]),
-  getItem(<Link to="/employee">Employee</Link>, '6', <UserOutlined />),
-  getItem('Payment', 'sub2', <MdOutlinePayment />, [
-    getItem(<Link to="/payment">Payment</Link>, '7',),
-    getItem(<Link to="/receipt">Receipt</Link>, '8',),
+  getItem(<Link to="/login/employee">Employee</Link>, '6', <UserOutlined />),
+  getItem('Payment', 'sub2', undefined, [
+    getItem(<Link to="/login/payment">Payment</Link>, '7', <MdOutlinePayment />),
+    getItem(<Link to="/login/receipt">Receipt</Link>, '8', <IoReceiptOutline />),
   ]),
-  getItem(<Link to="/logout">Logout</Link>, 'logout', <RiLogoutBoxLine />),
 ];
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedBookingID, setSelectedBookingID] = useState<number | null>(null);
 
-  const handleBookingSelect = (id: number) => {
-    setSelectedBookingID(id);
-  };
-  
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   return (
-    <BrowserRouter>
+    <>
       <Layout style={{ minHeight: '100vh' }}>
         <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-          <div className="demo-logo-vertical" />
+          <div className="logo">
+            <img
+                src={logo}
+                alt="Logo"
+                style={{ width: "80%", margin: "10px"}}
+              />
+          </div>
           <Menu
             theme="dark"
             defaultSelectedKeys={['1']}
             mode="inline"
             items={items}
-            
           />
-          {/* <button className='logout-button'>
-            <div className='logout-icon'>
-              <RiLogoutBoxLine />
-            </div>
-            <div>
-              logout
-            </div>
-          </button> */}
+          <div className='container-logout-button'>
+            <Link to="/">
+              <Button className='logout-button'>
+                <RiLogoutBoxLine />
+                logout
+              </Button>
+            </Link>
+          </div>
         </Sider>
         <Layout>
           <Content style={{ margin: '16px', padding: '16px', height: '100%' }}>
@@ -91,37 +83,13 @@ const App: React.FC = () => {
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
               }}
-            >
-              <Routes>
-                {/* Dashboard */}
-                <Route path="/" element={<h2>Dashboard Content</h2>} />
-
-                {/* Room */}
-                <Route path="/room" element={<h2>Room Content</h2>} />
-
-                {/* Meeting Room */}
-                <Route path="/meeting-room" element={<h2>Meeting Room Content</h2>} />
-                
-                {/* Food Service */}
-                <Route path="/food-service" element={<BookingList onBookingSelect={handleBookingSelect} />} />
-                <Route path="/structure/:bookingID" element={<Structure bookingID={selectedBookingID}/>} />
-                <Route path="/manage-data" element={<Edit />} />
-                <Route path="/create-menu" element={<Create />} />
-
-                {/* Employee */}
-                <Route path="/employee/*" element={<Home />} />
-
-                {/* Payment */}
-                <Route path="/payment" element={<Payment/>} />
-                <Route path="/receipt" element={<Receipt/>} />
-
-                <Route path="/logout" element={<h2>logout</h2>} />
-              </Routes>
+            > 
+              <Outlet />
             </div>
           </Content>
         </Layout>
       </Layout>
-    </BrowserRouter>
+    </>
   );
 };
 

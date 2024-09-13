@@ -11,24 +11,24 @@
     display: flex;
     justify-content: space-between; /* Distribute buttons left and right */
     align-items: center; /* Align buttons vertically */
-    margin-top: 20px;
-    margin-left: 20px;
-    margin-bottom: 0;
+    /* margin-top: 20px; */
+    margin-left: 10px;
+    /* margin-bottom: 0; */
 }
 
 .button-container .left-buttons {
     position: absolute;
     display: flex;
     bottom: 0;
-    gap: 20px; /* Space between buttons */
+    gap: 10px; /* Space between buttons */
 }
 
-.button-container .right-buttons {
+/* .button-container .right-buttons {
     position: absolute;
     display: flex;
     right: 30px;
     bottom: 0;
-}
+} */
 
 .button-container button{
     position: relative;

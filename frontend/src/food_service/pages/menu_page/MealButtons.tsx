@@ -25,7 +25,7 @@ function MealButtons({ selectedCategory, onCategoryClick }: MealButtonsProps) {
         if (Array.isArray(response.data)) {
             setMeals(response.data);
         } else {
-            console.error("Data fetched is not an array:", response);
+            console.error("Data fetched meal is not an array:", response);
             setMeals([]);
         }
     } catch (error) {

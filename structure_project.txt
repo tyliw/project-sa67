@@ -6,15 +6,16 @@
     │       ├── โปรเจคของแต่ละคน เช่น
     │       ├── room/
     │       │   └── ...
-    │       ├── meeting room/
+    │       ├── meeting_room/
     │       │   └── ...
-    │       ├── food service/
+    │       ├── food_service/
     │       │   └── ...
     │       ├── employee/
     │       │   └── ...
     │       ├── payment/
     │       │   └── ...
-    │       ├── app.tsx (app.tsx ตรงนี้จะเป็นส่วนที่เอาไฟล์ fronend แต่ละคนมารวมกัน)
+    │       ├── App.tsx (เป็นส่วนที่กำหนด layout ของ project)
+    │       ├── RouterComponent.tsx (ตรงนี้จะเป็นส่วนที่เอาไฟล์ fronend แต่ละคนมารวมกัน)
     │       └── main.tsx
     └── backend/
         ├── controller/
@@ -25,4 +26,4 @@
         │   └── ...
         ├── go.mod (ถ้าเป็นไปได้อยากให้ชื่อ module เป็น project-sa67)
         ├── go.sum
-        └── main.go (ใน main.go จะรวม API controller ของแต่ละคนไว้)
+        └── main.go (ใน main.go จะรวมไฟล์ controller ของแต่ละคนไว้)
