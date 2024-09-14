@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"project-sa67/config"
 	"project-sa67/controller"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,22 +29,43 @@ func main() {
 
 		// Position Routes
 		router.GET("/positions", controller.ListPositions)
+
+		// Booking Routes
+		router.POST("/bookings", controller.CreateBooking)
+		router.GET("/bookings/:id", controller.GetBooking)
+		router.GET("/bookings", controller.ListBookings)
+		router.DELETE("/bookings/:id", controller.DeleteBooking)
+		router.PATCH("/bookings/:id", controller.UpdateBooking)
+
+		// Room Type Routes
+		router.GET("/roomtypes", controller.ListRoomTypes)
+		router.GET("/roomtype", controller.ListRoomTypes)
+
+		// Room Routes
+		router.GET("/rooms", controller.ListRooms)
+		router.GET("/rooms/:id", controller.GetRoom)
+		router.PATCH("/rooms/:id", controller.UpdateRoom)
+
+		// customers Routes
+		router.POST("/customers", controller.CreateCustomer)
+		router.GET("/customers", controller.ListCustomers)
+
 		
-		// User Routes
+		// meetingRoom Routes
 		router.GET("/meetingRoom", controller.ListMeetingRoom)
 		router.GET("/meetingRoom/:id", controller.GetMeetingRoom) // Corrected route name
 		router.POST("/meetingRoom", controller.CreateMeetingRoom) // Assuming you want to create a meeting room
 		router.PATCH("/meetingRoom", controller.UpdateMeetingRoom)
 		router.DELETE("/meetingRoom/:id", controller.DeleteMeetingRoom)
 
-		// Customer Routes
+		// customerMeetingRoom Routes
 		router.GET("/customerMeetingRoom", controller.ListCustomerMeetingRoom)
 		router.GET("/customerMeetingRoom/:id", controller.GetCustomerMeetingRoom) // Corrected route name
 		router.POST("/customerMeetingRoom", controller.CreateCustomerMeetingRoom) // Assuming you want to create a customer meeting room
 		router.PATCH("/customerMeetingRoom", controller.UpdateCustomerMeetingRoom)
 		router.DELETE("/customerMeetingRoom/:id", controller.DeleteCustomerMeetingRoom)
 
-		// Booking Routes
+		// bookingMeetingRoom Routes
 		router.GET("/bookingMeetingRoom", controller.ListBookingMeetingRoom)
 		router.GET("/bookingMeetingRoom/:id", controller.GetBookingMeetingRoom) // Corrected route name
 		router.POST("/bookingMeetingRoom", controller.CreateBookingMeetingRoom) // Assuming you want to create a booking for a meeting room
@@ -65,13 +85,6 @@ func main() {
 		router.GET("/meals", controller.ListMeals)
 		router.DELETE("/meals/:id", controller.DeleteMeal)
 		router.PATCH("/meals/:id", controller.UpdateMeal)
-
-		// Booking Routes
-		router.POST("/bookings", controller.CreateBooking)
-		router.GET("/bookings/:id", controller.GetBooking)
-		router.GET("/bookings", controller.ListBookings)
-		router.DELETE("/bookings/:id", controller.DeleteBooking)
-		router.PATCH("/bookings/:id", controller.UpdateBooking)
 
 		// Menu Routes
 		router.POST("/menus", controller.CreateMenu)

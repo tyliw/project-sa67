@@ -22,6 +22,10 @@ npm install react-router-dom
 
 npm install react-icons --save
 
+npm install @mui/icons-material
+
 npm install @mui/material @emotion/react @emotion/styled
 
 npm install @mui/material@^6.1.0 @mui/icons-material
+
+npm install moment

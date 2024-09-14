@@ -2,8 +2,9 @@ package controller
 
 import (
 	"net/http"
-	"project-sa67/entity/room"
 	"project-sa67/config"
+	entity "project-sa67/entity/room"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,16 +39,13 @@ func GetRoomTypes(c *gin.Context) {
 
 // GET /room_types
 func ListRoomTypes(c *gin.Context) {
-	var roomTypes []entity.RoomTypes
+	var room_types []entity.RoomTypes
 
 	db := config.DB()
-	results := db.Preload("RoomRanksRoomTypes").Find(&roomTypes)
-    if results.Error != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
-        return
-    }
-	
-    c.JSON(http.StatusOK, roomTypes)
+
+	db.Find(&room_types)
+
+	c.JSON(http.StatusOK, &room_types)
 }
 
 // DELETE /room_types/:id

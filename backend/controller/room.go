@@ -28,12 +28,14 @@ func GetRoom(c *gin.Context) {
 	var room entity.Room
 	id := c.Param("id")
 
-	if err := config.DB().First(&room, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": room})
+	db := config.DB()
+	results := db.Preload("Bookings").Preload("RoomTypes").Find(&room, id)
+    if results.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
+        return
+    }
+	
+    c.JSON(http.StatusOK, room)
 }
 
 // GET /rooms

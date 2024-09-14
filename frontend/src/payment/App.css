@@ -37,7 +37,7 @@ body {
   margin-top: 20px;
 }
 
-.app-container th, td {
+.app-container th,.app-container td {
   text-align: left;
   padding: 10px;
   border-bottom: 1px solid #ddd;
@@ -59,19 +59,6 @@ body {
   background-color: #ff65a3;
 }
 
-.app-container footer {
-  padding: 20px;
-  background-color: #ff85b3;
-  color: white;
-  position: fixed;
-  left: 50;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  z-index: 1000;
-}
-
 .app-container .tabs button {
   padding: 10px 20px;
   margin-right: 5px;
@@ -85,72 +72,34 @@ body {
   background-color: #222222;
 }
 
-.app-container .tabs button:focus, .tabs button.active {
-  border-bottom: 2px solid #ff85b3;
-}
-
 .app-container .receipt-section {
-  background-color: #ffb9fd;
+  background-color: #b9ffdd;
   padding: 20px;
   margin-top: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.app-container .receipt-section h2 {
-  color: #000000;
-}
-
-.app-container .table {
+.booking-table {
+  color: black;
+  font-family: 'Arial', sans-serif;
   width: 100%;
+  height: 400px;
   border-collapse: collapse;
-}
-
-.app-container .table th, .table td {
-  padding: 15px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.app-container .table th {
-  background-color: #f0f0f0;
-}
-
-.app-container .img-responsive {
-  max-width: 100%;
-  height: auto;
-}
-
-.app-container .contact-reception {
-  margin-top: 20px;
-  color: #333;
-  font-style: italic;
+  overflow: auto;
 }
 
 .order-table {
   color: black;
   font-family: 'Arial', sans-serif;
   width: 100%;
+  height: 420px;
   border-collapse: collapse;
+  overflow: auto;
 }
 
 .order-table h2 {
   text-align: center;
-}
-
-.order-table table {
-  width: 100%;
-  margin: 20px 0;
-}
-
-.order-table th, .order-table td {
-  text-align: left;
-  padding: 8px;
-  border-bottom: 1px solid black;
-}
-
-.order-table th {
-  background-color: #f0e1f4;
 }
 
 .payment-menu-image {
@@ -158,3 +107,51 @@ body {
   height: 150px;
   object-fit: cover;
 }
+
+/* .app-container .receipt-section h2 {
+  color: #000000;
+} */
+
+/* .app-container .table {
+  width: 100%;
+  border-collapse: collapse;
+} */
+
+/* .app-container .table th,.app-container.table td {
+  padding: 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+} */
+
+/* .app-container .table th {
+  background-color: #f0f0f0;
+} */
+
+/* .app-container .img-responsive {
+  max-width: 100%;
+  height: auto;
+} */
+
+/* .app-container .contact-reception {
+  margin-top: 20px;
+  color: #333;
+  font-style: italic;
+} */
+
+
+
+/* .order-table table {
+  width: 100%;
+  margin: 20px 0;
+} */
+
+/* .order-table th, .order-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid black;
+} */
+
+/* .order-table th {
+  background-color: #f0e1f4;
+} */
+

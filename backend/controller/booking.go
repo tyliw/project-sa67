@@ -2,8 +2,9 @@ package controller
 
 import (
 	"net/http"
-	"project-sa67/entity/room"
 	"project-sa67/config"
+	entity "project-sa67/entity/room"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,12 +29,14 @@ func GetBooking(c *gin.Context) {
 	var booking entity.Booking
 	id := c.Param("id")
 
-	if err := config.DB().First(&booking, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	db := config.DB()
+	results := db.Preload("Customer").Preload("Room").Find(&booking, id)
+	if results.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": booking})
+	c.JSON(http.StatusOK, booking)
 }
 
 // GET /bookings
@@ -42,12 +45,12 @@ func ListBookings(c *gin.Context) {
 
 	db := config.DB()
 	results := db.Preload("Customer").Preload("Room").Find(&bookings)
-    if results.Error != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
-        return
-    }
-	
-    c.JSON(http.StatusOK, bookings)
+	if results.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, bookings)
 }
 
 // DELETE /bookings/:id

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom'; // <-- Add this
 import { Col, Divider } from 'antd';
 import { MdBedroomParent } from "react-icons/md";
-import { BookingInterface } from '../../interfaces/IBooking';
-import { GetBookings } from '../../services/https/BookingAPI';
+import { BookingInterface } from '../../../room/booking/interfaces/IBooking';
+import { GetBookings } from '../../../room/booking/services/https';
 import './index.css';
 
 interface BookingProps {

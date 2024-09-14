@@ -6,9 +6,8 @@ import (
 
 type Room struct {
 	gorm.Model
-	Status     string
-	Address    string
-	TotalPrice int
+	Status  string `gorm:"default:Guest"`
+	Address string
 
 	// 1 creator เป็นเจ้าของได้หลาย Sound
 	Bookings []Booking `gorm:"foreignKey:RoomID"`

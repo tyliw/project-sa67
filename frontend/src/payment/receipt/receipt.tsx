@@ -1,49 +1,72 @@
 import { useEffect, useState } from 'react';
-import './App.css';
-// import Screenshot from './assets/qr-code.png';
+import { useLocation } from 'react-router-dom';
 import { PaymentInterface } from '../interface/IPayment';
 import { GetPaymentById } from '../services/https/PaymentAPI';
-import { BookingInterface } from '../../food_service/interfaces/IBooking';
 import { OrderInterface } from '../../food_service/interfaces/IOrder';
-import { GetBookings } from '../../food_service/services/https/BookingAPI';
+import { GetBookingsById, GetRoomsById } from '../../room/booking/services/https';
 import { GetOrders } from '../../food_service/services/https/OrderAPI';
-import { useLocation } from 'react-router-dom';
+import { BookingInterface } from '../../room/booking/interfaces/IBooking';
+import './App.css';
+import { RoomInterface } from '../../room/booking/interfaces/IRoom';
 
 const Receipt = () => {
-  const [booking, setBooking] = useState<BookingInterface[]>([]);
-  const [order, setOrder] = useState<OrderInterface[]>([]);
   const [payment, setPayment] = useState<PaymentInterface | null>(null);
+  const [booking, setBooking] = useState<BookingInterface | null>(null); // Change to single object
+  const [room, setRoom] = useState<RoomInterface | null>(null);
+  const [order, setOrder] = useState<OrderInterface[]>([]);
 
   const location = useLocation();
-  const paymentID = location.state?.paymentID;
+  const { paymentID, bookingID, roomID } = location.state || {};
 
   useEffect(() => {
+    console.log("Received paymentID:", paymentID);
+    console.log("Received bookingID:", bookingID);
+    console.log("Received roomID:", roomID);
+
     if (paymentID) {
       fetchPayment(paymentID);
+      fetchBooking(bookingID);
+      fetchRoom(roomID);
+      fetchOrder();
     }
-    fetchBooking();
-    fetchOrder();
   }, [paymentID]);
 
   const fetchPayment = async (id: number) => {
     try {
       const response = await GetPaymentById(id);
-      console.log("API GetPaymentById for Receipt: ", response);
-      setPayment(response);
+      console.log("API GetPaymentById for Receipt: ", response.BookingID);
+      
+      
+      if (response?.BookingID) {
+        setPayment(response);
+      }
     } catch (error) {
       console.error("Error fetching payment data:", error);
     }
   };
-  const fetchBooking = async () => {
+
+  const fetchBooking = async (bookingID: number) => {
     try {
-      const response = await GetBookings();
-      console.log("API booking response for payment: ", response);
-      // Since the response is an array, directly use it
-      if (Array.isArray(response)) {
+      const response = await GetBookingsById(bookingID);
+      console.log("GetBookingsById: ", response);
+      
+
+      if (response?.ID) {
         setBooking(response);
-      } else {
-        console.error("API did not return expected array format:", response);
-        setBooking([]);
+      }
+    } catch (error) {
+      console.error("Error fetching booking data:", error);
+    }
+  };
+
+  const fetchRoom = async (roomID: number) => {
+    try {
+      const response = await GetRoomsById(roomID);
+      console.log("GetRoomsById: ", response);
+      
+
+      if (response?.ID) {
+        setRoom(response);
       }
     } catch (error) {
       console.error("Error fetching booking data:", error);
@@ -52,61 +75,51 @@ const Receipt = () => {
 
   const fetchOrder = async () => {
     try {
+      // Assuming you need to filter orders by booking ID; update this if necessary
       const response = await GetOrders();
-      console.log("API order response for payment: ", response);
-      if (Array.isArray(response)) {
-        setOrder(response);
-      } else {
-        setOrder([]);
-      }
+      const filteredOrders = response.filter((order: { BookingID: number; }) => order.BookingID === bookingID);
+      console.log("filteredOrders: ", filteredOrders);
+      setOrder(filteredOrders);
     } catch (error) {
       console.error("Error fetching order data:", error);
     }
   };
-
-  
-  console.log("booking for receipt: ", booking);
-  console.log("order for receipt: ", order);
-  console.log("payment for receipt: ", payment)
-
-  // const items = [
-  //   { name: 'Matcha Grande', quantity: 2, price: 24.50 },
-  //   { name: 'Muffin Blueberry', quantity: 1, price: 15.13 },
-  //   { name: 'Matcha Grande', quantity: 2, price: 24.50 },
-  //   { name: 'Muffin Blueberry', quantity: 1, price: 15.13 }
-  // ];
-
-  // const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0);
-  // const tip = subtotal * 0.10;
-  // const total = subtotal + tip;
 
   return (
     <div className="receipt">
       <header className="receipt-header">
         <h1>Receipt</h1>
       </header>
-      {booking.map((booking) => (
-          <div key={booking.ID} className="receipt-item">
-            <span>Number {booking.Room?.Address}</span>
-            <span>- {booking.Room?.RoomTypes?.Name}</span>
-            <span>${booking.Room?.TotalPrice}</span>
-          </div>
-        ))}
-      <div className="receipt-divider"></div>
-        
-      <div className="receipt-body">
-        {order.map((order) => (
-          <div key={order.ID} className="receipt-item">
-            <span>{order.Menu?.MenuList}</span>
-            <span>x{order.Amount}</span>
-            <span>${order.Menu?.Price}</span>
-          </div>
-        ))}
-        <div className="receipt-divider">
-          <div><span>Total Payment</span><span>$</span></div>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" />
+
+      {booking && (
+        <div className="receipt-room">
+          <span>{booking.Customer?.Name}</span>
+          <span>{booking.Room?.Address}</span>
+          <span>${booking.RoomID == room?.ID ? room?.RoomTypes?.PricePerNight : null}</span>
         </div>
+      )}
+
+      <div className="receipt-divider"></div>
+
+      {order.map((order) => (
+        <div key={order.ID} className="receipt-order">
+          <span>{order.Menu?.MenuList}</span>
+          <span>x{order.Amount}</span>
+          <span>${order.Price.toFixed(2)}</span>
+        </div>
+      ))}
+
+      <div className="receipt-total">
+        {payment && (
+          <h3>Total Payment: ${payment.TotalAmount.toFixed(2)}</h3>
+        )}
       </div>
+
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+        alt="QR Code"
+        className="qr-code"
+      />
     </div>
   );
 };

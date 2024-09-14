@@ -2,11 +2,10 @@ import { BookingInterface } from './IBooking';
 import { RoomTypesInterface } from './IRoomTypes';
 
 export interface RoomInterface {
-  ID: number;
-  Status: string;
-  Address: string;
-  TotalPrice: number;
+  ID?: number;
+  Status?: string;
+  Address?: string;
   Bookings?: BookingInterface[];
-  RoomTypesId: number | null;
+  RoomTypesId?: number | null;
   RoomTypes?: RoomTypesInterface;
 }

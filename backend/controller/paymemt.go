@@ -28,12 +28,14 @@ func GetPayment(c *gin.Context) {
 	var payment entity.Payment
 	id := c.Param("id")
 
-	if err := config.DB().First(&payment, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": payment})
+	db := config.DB()
+	results := db.Preload("Booking").Find(&payment, id)
+    if results.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
+        return
+    }
+	
+    c.JSON(http.StatusOK, payment)
 }
 
 // GET /orders

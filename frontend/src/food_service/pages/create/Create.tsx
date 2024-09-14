@@ -56,7 +56,7 @@ const Create: React.FC = () => {
                     content: "Data saved successfully",
                 });
                 // Navigate to the desired page after a short delay to allow the message to be visible
-                setTimeout(() => navigate('/manage-data'), 500);
+                setTimeout(() => navigate('/login/manage-data'), 500);
             } else {
                 messageApi.open({
                     type: "error",
@@ -222,7 +222,7 @@ const Create: React.FC = () => {
                         <Col style={{ marginTop: "40px" }}>
                             <Form.Item>
                                 <Space>
-                                    <Button onClick={() => navigate('/manage-data')} style={{ marginRight: "10px" }}>
+                                    <Button onClick={() => navigate('/login/manage-data')} style={{ marginRight: "10px" }}>
                                         Cancel
                                     </Button>
                                     <Button

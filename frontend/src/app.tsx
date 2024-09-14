@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { PieChartOutlined, UserOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, Layout, Menu, MenuProps, theme } from 'antd';
-import { MdFastfood, MdOutlinePayment, MdOutlineBedroomParent, MdMeetingRoom } from "react-icons/md";
+import { MdFastfood, MdOutlinePayment, MdOutlineBedroomParent, MdMeetingRoom,MdBorderColor } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoReceiptOutline } from "react-icons/io5";
 import logo from "./assets/logo.png";
@@ -29,19 +29,20 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(<Link to="/login/dashboard">Dashboard</Link>, '1', <PieChartOutlined />),
-  getItem('Room', 'sub1', <MdOutlineBedroomParent />, [
-    getItem(<Link to="/login/food-service">Room</Link>, '2', <MdFastfood />),
-    getItem(<Link to="/login/manage-data">Manage Data</Link>, '3', <TableOutlined />),
+  getItem('Room', 'sub1', undefined, [
+    getItem(<Link to="/login/room">Booking</Link>, '2', <MdOutlineBedroomParent />),
+    getItem(<Link to="/login/customer">Create Customer</Link>, '3', <UserOutlined />),
+    getItem(<Link to="/login/edit">Edite Booking</Link>, '4', <MdBorderColor />),
   ]),
-  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '4', <MdMeetingRoom/>),
+  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '5', <MdMeetingRoom/>),
   getItem('Food', 'sub2', undefined, [
-    getItem(<Link to="/login/food-service">Food Service</Link>, '5', <MdFastfood />),
-    getItem(<Link to="/login/manage-data">Manage Data</Link>, '6', <TableOutlined />),
+    getItem(<Link to="/login/food-service">Food Service</Link>, '6', <MdFastfood />),
+    getItem(<Link to="/login/manage-data">Manage Data</Link>, '7', <TableOutlined />),
   ]),
-  getItem(<Link to="/login/employee">Employee</Link>, '7', <UserOutlined />),
+  getItem(<Link to="/login/employee">Employee</Link>, '8', <UserOutlined />),
   getItem('Payment', 'sub3', undefined, [
-    getItem(<Link to="/login/payment">Payment</Link>, '8', <MdOutlinePayment />),
-    getItem(<Link to="/login/receipt">Receipt</Link>, '9', <IoReceiptOutline />),
+    getItem(<Link to="/login/payment">Payment</Link>, '9', <MdOutlinePayment />),
+    getItem(<Link to="/login/receipt">Receipt</Link>, '10', <IoReceiptOutline />),
   ]),
 ];
 

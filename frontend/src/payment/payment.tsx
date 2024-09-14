@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdOutlinePayment } from "react-icons/md";
 import { PaymentInterface } from "./interface/IPayment";
-import {
-  DeleteBookingByID,
-  GetBookings,
-} from "../food_service/services/https/BookingAPI";
-import { BookingInterface } from "../food_service/interfaces/IBooking";
 import {
   DeleteOrderByID,
   GetOrders,
@@ -15,10 +10,13 @@ import { OrderInterface } from "../food_service/interfaces/IOrder";
 import "./App.css";
 import { CreatePayments } from "./services/https/PaymentAPI";
 import { message, Modal } from "antd";
-
+import { BookingInterface } from "../room/booking/interfaces/IBooking";
+import { DeleteBookingByID, GetBookings, GetRooms, UpdateRoom } from "../room/booking/services/https";
+import { RoomInterface } from "../room/booking/interfaces/IRoom";
 
 function Payment() {
   const [booking, setBooking] = useState<BookingInterface[]>([]);
+  const [room, setRoom] = useState<RoomInterface[]>([]);
   const [order, setOrder] = useState<OrderInterface[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
@@ -27,7 +25,6 @@ function Payment() {
     try {
       const response = await GetBookings();
       console.log("API booking response for payment: ", response);
-      // Since the response is an array, directly use it
       if (Array.isArray(response)) {
         setBooking(response);
       } else {
@@ -36,6 +33,21 @@ function Payment() {
       }
     } catch (error) {
       console.error("Error fetching booking data:", error);
+    }
+  };
+
+  const fetchRoom = async () => {
+    try {
+      const response = await GetRooms();
+      console.log("GetRooms response: ", response);
+      if (Array.isArray(response)) {
+        setRoom(response);
+      } else {
+        console.error("API did not return expected array format:", response);
+        setRoom([]);
+      }
+    } catch (error) {
+      console.error("Error fetching room data:", error);
     }
   };
 
@@ -55,20 +67,31 @@ function Payment() {
 
   useEffect(() => {
     fetchBooking();
+    fetchRoom();
     fetchOrder();
   }, []); // Empty array ensures it only runs on component mount
 
   console.log("booking for payment: ", booking);
   console.log("order for payment: ", order);
+  console.log("room for payment: ", room);
 
-  // const [selectedStatus, setSelectedStatus] = useState("Confirmed");
-
-  const handleDeleteBooking = async (id: number) => {
-    if (id) {
-      const success = await DeleteBookingByID(id);
+  const handleDeleteBooking = async (booking: BookingInterface) => {
+    if (booking.ID) {
+      const success = await DeleteBookingByID(booking.ID);
       if (success) {
-        message.success('Delete Booking Successfully');
-        fetchBooking(); // Refresh the list after deletion
+        
+        const roomUpdate: RoomInterface = {
+          Status: "Vacant", // Update status to Invalid
+        };
+
+        const roomPach = await UpdateRoom(roomUpdate);
+        console.log("UpdateRoom form payment:", roomPach)
+        if (roomPach) {
+          message.success('Delete Booking Successfully');
+          fetchBooking(); // Refresh the list after deletion
+        }else {
+          message.success('Update Room Failed');
+        }
       } else {
         message.success('Delete Booking Failed');
       }
@@ -87,14 +110,14 @@ function Payment() {
     }
   };
 
-  const confirmCancalBooking = (id: number) => {
+  const confirmCancalBooking = (booking: BookingInterface) => {
     Modal.confirm({
       title: 'Are you sure you want to delete this item?',
       content: 'This action cannot be undone.',
       okText: 'Delete',
       okType: 'danger',
       cancelText: 'Cancel',
-      onOk: () => handleDeleteBooking(id),
+      onOk: () => handleDeleteBooking(booking),
     });
   };
 
@@ -109,43 +132,59 @@ function Payment() {
     });
   };
 
-
   const handleConfirm = async (booking_id: number) => {
-    // Find the booking based on the selected booking ID
     const selectedBooking = booking.find((b) => b.ID === booking_id);
-    
-    // Calculate room price from the selected booking (if available)
-    const roomPrice = selectedBooking?.Room?.TotalPrice || 0;
   
-    // Filter orders related to the selected booking (if applicable)
+    if (!selectedBooking) {
+      console.error("Selected booking not found");
+      return;
+    }
+  
+    const roomID = selectedBooking.Room?.ID;
+    let roomPrice: number = 0; // Initialize as a number
+  
+    if (roomID) {
+      // Find room details from the room state
+      const roomDetails = room.find(r => r.ID === roomID);
+  
+      // Ensure roomPrice is a number
+      roomPrice = roomDetails?.RoomTypes?.PricePerNight 
+        ? Number(roomDetails.RoomTypes.PricePerNight) 
+        : 0;
+    }
+  
+    console.log("Room Price: ", roomPrice);
+  
     const relatedOrders = order.filter((o) => o.BookingID === booking_id);
-  
-    // Calculate total price from all orders
     const ordersTotalPrice = relatedOrders.reduce((total, currentOrder) => {
-      return total + currentOrder.Price;
+      // Ensure Price is a number
+      const orderPrice = Number(currentOrder.Price) || 0; 
+      return total + orderPrice;
     }, 0);
   
-    // Calculate the total amount (room price + orders total price)
+    console.log("Orders Total Price: ", ordersTotalPrice);
+  
     const totalAmount = roomPrice + ordersTotalPrice;
   
-    // Prepare payment data
+    console.log("Total Amount: ", totalAmount);
+  
     const paymentData: PaymentInterface = {
       PaymentDate: new Date(),
-      TotalAmount: totalAmount, // Use the calculated totalAmount here
+      TotalAmount: totalAmount,
       PaymentMethod: "credit",
       BookingID: booking_id,
     };
   
-    // Send the payment data to the API
     const res = await CreatePayments(paymentData);
+    console.log("CreatePayments Response: ", res);
+  
     if (res) {
       messageApi.open({
         type: "success",
         content: "Data saved successfully",
       });
   
-      // Navigate to the receipt page and send payment ID via state
-      setTimeout(() => navigate("/login/receipt", { state: { paymentID: res.ID } }), 500);
+      setTimeout(() => navigate("/login/receipt", { state: { paymentID: res.data.ID, bookingID: booking_id, roomID: roomID } }), 500);
     } else {
       messageApi.open({
         type: "error",
@@ -154,7 +193,6 @@ function Payment() {
     }
   };
   
-
   return (
     <div className="app-container">
       {contextHolder}
@@ -164,78 +202,82 @@ function Payment() {
       </header>
       <section className="payment-section">
         <h2>Booking</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Book ID</th>
-              <th>CheckIn</th>
-              <th>CheckOut</th>
-              <th>Customer</th>
-              <th>Room</th>
-              <th>Room Price</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {booking.map((booking) => (
-              <tr key={booking.ID}>
-                <td>{booking.ID}</td>
-                <td>{booking.CheckIn}</td>
-                <td>{booking.CheckOut}</td>
-                <td>{booking.Customer?.Name}</td>
-                <td>{booking.Room?.Address}</td>
-                <td>{booking.Room?.TotalPrice}</td>
-                <td>
-                  <button onClick={() => handleConfirm(booking.ID)}>
-                    Confirm
-                  </button>
-
-                  <button
-                    className="btn-delete-booking"
-                    onClick={() => confirmCancalBooking(booking.ID)}
-                  >
-                    Cancel
-                  </button>
-                </td>
-                {/* <td>{item.totalAmount}</td> */}
+        <div className="booking-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>CheckIn</th>
+                <th>CheckOut</th>
+                <th>Customer</th>
+                <th>Room</th>
+                <th>Room Price</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {booking.map((b) => {
+                const matchedRoom = room.find(r => r.ID === b.Room?.ID);
+                return (
+                  <tr key={b.ID}>
+                    <td>{b.ID}</td>
+                    <td>{b.CheckIn}</td>
+                    <td>{b.CheckOut}</td>
+                    <td>{b.Customer?.Name}</td>
+                    <td>{matchedRoom?.Address}</td>
+                    <td>{matchedRoom?.RoomTypes?.PricePerNight}</td>
+                    <td>
+                      <button onClick={() => handleConfirm(b.ID)}>
+                        Confirm
+                      </button>
+
+                      <button
+                        className="btn-delete-booking"
+                        onClick={() => confirmCancalBooking(b)}
+                      >
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         <div>
-          <div className="order-table">
             <h2>Order</h2>
+          <div className="order-table">
             <table>
               <thead>
                 <tr>
                   <th>Order ID</th>
-                  <th>Mene Image</th>
-                  <th>Mene</th>
+                  <th>Menu Image</th>
+                  <th>Menu</th>
                   <th>Amount</th>
                   <th>Price</th>
-                  {/* <th>OrderDate</th> */}
+                  <th>Booking ID</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {order.map((order) => (
-                  <tr key={order.ID}>
-                    <td>{order.ID}</td>
+                {order.map((o) => (
+                  <tr key={o.ID}>
+                    <td>{o.ID}</td>
                     <td>
                       <img
                         className="payment-menu-image"
-                        src={order.Menu?.ImageMenu}
+                        src={o.Menu?.ImageMenu}
                         alt=""
                       />
                     </td>
-                    <td>{order.Menu?.MenuList}</td>
-                    <td>{order.Amount}</td>
-                    <td>{order.Price.toFixed(2)}</td>
-                    {/* <td>{order.OrderDate}</td> */}
+                    <td>{o.Menu?.MenuList}</td>
+                    <td>{o.Amount}</td>
+                    <td>{o.Price.toFixed(2)}</td>
+                    <td>{o.BookingID}</td>
                     <td>
                       <button
                         className="btn-delete-order"
-                        onClick={() => confirmCancalOrder(order.ID)}
+                        onClick={() => confirmCancalOrder(o.ID as number)}
                       >
                         Cancel
                       </button>
@@ -245,19 +287,10 @@ function Payment() {
               </tbody>
             </table>
           </div>
-
-          {/* <button onClick={() => setSelectedStatus("Pending")}>Pending</button> */}
-          {/* <button onClick={() => setSelectedStatus("Cancelled")}>Cancel</button> */}
-          {/* <button onClick={() => setShowReceipt(true)}>Show Receipt</button> */}
         </div>
-        {/* <div className="status-display">
-          Status:{" "}
-          <span className={`${selectedStatus.toLowerCase()}`}>
-            {selectedStatus}
-          </span>
-        </div> */}
       </section>
     </div>
   );
 }
+
 export default Payment;

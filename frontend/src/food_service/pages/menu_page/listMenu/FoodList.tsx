@@ -98,7 +98,7 @@ function FoodList({ selectedCategory, bookingID }: { selectedCategory: string | 
           BookingID: bookingID,
           MenuID: item.ID,
           Amount: item.amount,
-          Price: Math.round(parseFloat(item.Price) * parseFloat(item.amount) * 100) / 100,
+          Price: item.Price * item.amount,
           OrderDate: new Date(),
         };
          

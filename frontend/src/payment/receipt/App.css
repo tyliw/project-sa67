@@ -19,7 +19,13 @@
   font-size: 22px;
 }
 
-.receipt-item {
+.receipt-room {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.receipt-order {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
