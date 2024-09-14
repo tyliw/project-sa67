@@ -10,7 +10,7 @@ git remote add origin https://github.com/tyliw/project-sa67.git
 
 git push -u origin main
 
-git pull origin main
+/git pull origin main/
 
 //Frontend Install List//
 
