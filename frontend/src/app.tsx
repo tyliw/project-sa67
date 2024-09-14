@@ -30,18 +30,18 @@ function getItem(
 const items: MenuItem[] = [
   getItem(<Link to="/login/dashboard">Dashboard</Link>, '1', <PieChartOutlined />),
   getItem('Room', 'sub1', <MdOutlineBedroomParent />, [
-    getItem(<Link to="/login/food-service">Room</Link>, '4', <MdFastfood />),
-    getItem(<Link to="/login/manage-data">Manage Data</Link>, '5', <TableOutlined />),
+    getItem(<Link to="/login/food-service">Room</Link>, '2', <MdFastfood />),
+    getItem(<Link to="/login/manage-data">Manage Data</Link>, '3', <TableOutlined />),
   ]),
-  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '3', <MdMeetingRoom/>),
+  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '4', <MdMeetingRoom/>),
   getItem('Food', 'sub2', undefined, [
-    getItem(<Link to="/login/food-service">Food Service</Link>, '4', <MdFastfood />),
-    getItem(<Link to="/login/manage-data">Manage Data</Link>, '5', <TableOutlined />),
+    getItem(<Link to="/login/food-service">Food Service</Link>, '5', <MdFastfood />),
+    getItem(<Link to="/login/manage-data">Manage Data</Link>, '6', <TableOutlined />),
   ]),
-  getItem(<Link to="/login/employee">Employee</Link>, '6', <UserOutlined />),
+  getItem(<Link to="/login/employee">Employee</Link>, '7', <UserOutlined />),
   getItem('Payment', 'sub3', undefined, [
-    getItem(<Link to="/login/payment">Payment</Link>, '7', <MdOutlinePayment />),
-    getItem(<Link to="/login/receipt">Receipt</Link>, '8', <IoReceiptOutline />),
+    getItem(<Link to="/login/payment">Payment</Link>, '8', <MdOutlinePayment />),
+    getItem(<Link to="/login/receipt">Receipt</Link>, '9', <IoReceiptOutline />),
   ]),
 ];
 

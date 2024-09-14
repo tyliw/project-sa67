@@ -12,12 +12,10 @@ func SetupPaymentDatabase() {
 	)
 
     payment := entity.Payment{
-        PaymentID:     1,
         BookingID:     1,
         TotalAmount:   500,
         PaymentDate:   time.Now(),
         PaymentMethod: "Credit Card",
-        Status:        "Pending",
     }
     db.Create(&payment)
 

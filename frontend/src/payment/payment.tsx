@@ -16,6 +16,7 @@ import "./App.css";
 import { CreatePayments } from "./services/https/PaymentAPI";
 import { message, Modal } from "antd";
 
+
 function Payment() {
   const [booking, setBooking] = useState<BookingInterface[]>([]);
   const [order, setOrder] = useState<OrderInterface[]>([]);
@@ -142,7 +143,9 @@ function Payment() {
         type: "success",
         content: "Data saved successfully",
       });
-      setTimeout(() => navigate("/login/receipt"), 500);
+  
+      // Navigate to the receipt page and send payment ID via state
+      setTimeout(() => navigate("/login/receipt", { state: { paymentID: res.ID } }), 500);
     } else {
       messageApi.open({
         type: "error",

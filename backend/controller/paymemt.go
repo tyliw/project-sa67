@@ -40,12 +40,14 @@ func GetPayment(c *gin.Context) {
 func ListPayment(c *gin.Context) {
 	var payments []entity.Payment
 
-	if err := config.DB().Find(&payments).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": payments})
+	db := config.DB()
+	results := db.Preload("Booking").Find(&payments)
+    if results.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
+        return
+    }
+	
+    c.JSON(http.StatusOK, payments)
 }
 
 // DELETE /orders/:id

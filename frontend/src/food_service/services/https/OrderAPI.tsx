@@ -16,6 +16,24 @@ export async function GetOrders() {
   return res;
 }
 
+export async function GetOrdersById(id: number | undefined) {
+  const requestOptions = {
+    method: "GET"
+  };
+
+  const res = await fetch(`${apiUrl}/orders/${id}`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+};
+
+
 export async function CreateOrder(data: OrderInterface) {
   const requestOptions = {
     method: "POST",

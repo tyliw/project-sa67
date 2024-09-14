@@ -1,52 +1,44 @@
-.payment-container {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .qr-section {
-    margin-top: 20px;
-  }
-  
-  .qr-code {
-    width: 200px;
-    height: 200px;
-    margin: 20px 0;
-  }
-  
-  .pay-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .pay-button:hover {
-    background-color: #45a049;
-  }
-  
-  .receipt-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .receipt-details {
-    margin: 10px 0;
-  }
-  
-  .close-button {
-    background-color: #d9534f;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .close-button:hover {
-    background-color: #c9302c;
-  }
-  
+.receipt {
+  font-family: 'Arial', sans-serif;
+  max-width: 300px;
+  margin: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.receipt-header {
+  text-align: center;
+}
+
+.receipt-footer {
+  text-align: center;
+}
+
+.receipt-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.receipt-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.receipt-divider {
+  border-top: 1px dashed #000;
+  padding-top: 5px;
+  margin-top: 10px;
+}
+
+.receipt-divider div {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.receipt-oop {
+  border-top: 1px dashed #000;
+  padding-top: 5px;
+  margin-top: 10px;
+}

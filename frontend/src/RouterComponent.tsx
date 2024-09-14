@@ -18,6 +18,10 @@ const RouterComponent: React.FC = () => {
     setSelectedBookingID(id);
   };
 
+  const handleConfirm = (id: number) => {
+    setSelectedBookingID(id);
+  };
+
   const router = createBrowserRouter([
     {
       path: '/',
@@ -45,7 +49,7 @@ const RouterComponent: React.FC = () => {
         { path: 'manage-data', element: <Edit /> },
         { path: 'manage-data/create-menu', element: <Create /> },
         { path: 'employee/*', element: <Home /> },
-        { path: 'payment', element: <Payment /> },
+        { path: 'payment', element: <Payment onPaymentSelect={handleConfirm}/> },
         { path: 'receipt', element: <Receipt /> },
         { path: 'logout', element: <h2>Logout</h2> },
         { path: '*', element: <h2>404 - Not Found</h2> }, // เส้นทาง 404 สำหรับเส้นทางที่ไม่พบ

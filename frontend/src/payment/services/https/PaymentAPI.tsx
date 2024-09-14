@@ -16,6 +16,24 @@ export async function GetPayments() {
   return res;
 }
 
+export async function GetPaymentById(id: number | undefined) {
+  const requestOptions = {
+    method: "GET"
+  };
+
+  const res = await fetch(`${apiUrl}/payments/${id}`, requestOptions)
+    .then((res) => {
+      if (res.status == 200) {
+        return res.json();
+      } else {
+        return false;
+      }
+    });
+
+  return res;
+};
+
+
 export async function CreatePayments(data: PaymentInterface) {
   const requestOptions = {
     method: "POST",
