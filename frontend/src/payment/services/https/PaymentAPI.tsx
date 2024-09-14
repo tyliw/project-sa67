@@ -10,7 +10,7 @@ export async function GetPayments() {
     },
   };
 
-  const res = await fetch(`${apiUrl}/bookings`, requestOptions)
+  const res = await fetch(`${apiUrl}/payments`, requestOptions)
     .then((res) => res.status === 200 ? res.json() : false);
 
   return res;
@@ -23,7 +23,7 @@ export async function CreatePayments(data: PaymentInterface) {
     body: JSON.stringify(data),
   };
 
-  const res = await fetch(`${apiUrl}/bookings`, requestOptions)
+  const res = await fetch(`${apiUrl}/payments`, requestOptions)
     .then((res) => res.status === 201 ? res.json() : false);
 
   return res;
@@ -36,7 +36,7 @@ export async function UpdatePayments(data: PaymentInterface) {
     body: JSON.stringify(data),
   };
 
-  const res = await fetch(`${apiUrl}/bookings/${data.ID}`, requestOptions)
+  const res = await fetch(`${apiUrl}/payments/${data.ID}`, requestOptions)
     .then((res) => res.status === 200 ? res.json() : false);
 
   return res;
@@ -47,7 +47,7 @@ export async function DeletePaymentsByID(id: number) {
     method: "DELETE",
   };
 
-  const res = await fetch(`${apiUrl}/bookings/${id}`, requestOptions)
+  const res = await fetch(`${apiUrl}/payments/${id}`, requestOptions)
     .then((res) => res.status === 200 ? true : false);
 
   return res;

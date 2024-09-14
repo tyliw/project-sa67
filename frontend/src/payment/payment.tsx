@@ -1,261 +1,260 @@
-import React, { useState } from 'react';
-import bankLogo1 from './assets/kasikorn-logo.png';
-import bankLogo2 from './assets/thaipanit-logo.png';
-import bankLogo3 from './assets/promptpay-logo.png';
-import Screenshot from './assets/qr-code.png';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdOutlinePayment } from "react-icons/md";
+import { PaymentInterface } from "./interface/IPayment";
+import {
+  DeleteBookingByID,
+  GetBookings,
+} from "../food_service/services/https/BookingAPI";
+import { BookingInterface } from "../food_service/interfaces/IBooking";
+import {
+  DeleteOrderByID,
+  GetOrders,
+} from "../food_service/services/https/OrderAPI";
+import { OrderInterface } from "../food_service/interfaces/IOrder";
+import "./App.css";
+import { CreatePayments } from "./services/https/PaymentAPI";
+import { message, Modal } from "antd";
 
-type BankDetail = {
-    accountNumber?: string;
-    accountHolder?: string;
-    imageSrc?: string;
-};
-
-// Define the type for the details object with an index signature
-interface Details {
-    [key: string]: BankDetail;  // This index signature tells TypeScript any string key returns a BankDetail
-}
-interface Props {
-    bankingDetails: BankDetail | null;
-}
-
-const BankingDetailsDisplay: React.FC<Props> = ({ bankingDetails }) => {
-  // State to manage the visibility of the banking details
-  const [isVisible, setIsVisible] = useState(true);
-
-  // Function to handle closing the banking details view
-  const handleClose = () => {
-    console.log('Close button clicked'); // This should appear in your browser's console when the button is clicked
-    setIsVisible(false);
-};
-
-
-  // Only render the component if isVisible is true and bankingDetails is not null
-  if (!isVisible || !bankingDetails) return null;
-}
 function Payment() {
-    const services = [
-        { id: 1, description: "Restaurant", price: 364.00 },
-        { id: 2, description: "Spa", price: 220.14 },
-        { id: 3, description: "Fitness", price: 1234.56 }
-         ];
-    const [activeTab, setActiveTab] = useState<string>('banking');
-    const [bookingDetails, setBookingDetails] = useState([
-        { reservationID: '1101', bookID: '201', roomID: '301', checkInDate: '2024-08-01', checkOutDate: '2024-08-05', totalAmount: '10000.00' },
-        { reservationID: '102', bookID: '202', roomID: '302', checkInDate: '2024-08-02', checkOutDate: '2024-08-06', totalAmount: '8000.00' }
-    ]);
-    const [selectedStatus, setSelectedStatus] = useState('Confirmed');
-    const [showReceipt, setShowReceipt] = useState(false);
+  const [booking, setBooking] = useState<BookingInterface[]>([]);
+  const [order, setOrder] = useState<OrderInterface[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
 
-    const handleTabClick = (tab: string) => {
-        setActiveTab(tab);
-    };
-    const [showDetails, setShowDetails] = useState(true);
+  const fetchBooking = async () => {
+    try {
+      const response = await GetBookings();
+      console.log("API booking response for payment: ", response);
+      // Since the response is an array, directly use it
+      if (Array.isArray(response)) {
+        setBooking(response);
+      } else {
+        console.error("API did not return expected array format:", response);
+        setBooking([]);
+      }
+    } catch (error) {
+      console.error("Error fetching booking data:", error);
+    }
+  };
 
-    // Function to hide the banking details section
-    const handleClose = () => {
-        setShowDetails(false);
-    };
-    const handleCloseReceipt = () => {
-        setShowReceipt(false);
-    };
-    const [bankingDetails, setBankingDetails] = useState<BankDetail | null>(null);
+  const fetchOrder = async () => {
+    try {
+      const response = await GetOrders();
+      console.log("API order response for payment: ", response);
+      if (Array.isArray(response)) {
+        setOrder(response);
+      } else {
+        setOrder([]);
+      }
+    } catch (error) {
+      console.error("Error fetching order data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBooking();
+    fetchOrder();
+  }, []); // Empty array ensures it only runs on component mount
+
+  console.log("booking for payment: ", booking);
+  console.log("order for payment: ", order);
+
+  // const [selectedStatus, setSelectedStatus] = useState("Confirmed");
+
+  const handleDeleteBooking = async (id: number) => {
+    if (id) {
+      const success = await DeleteBookingByID(id);
+      if (success) {
+        message.success('Delete Booking Successfully');
+        fetchBooking(); // Refresh the list after deletion
+      } else {
+        message.success('Delete Booking Failed');
+      }
+    }
+  };
+
+  const handleDeleteOrder = async (id: number) => {
+    if (id) {
+      const success = await DeleteOrderByID(id);
+      if (success) {
+        message.success('Delete Order Successfully');
+        fetchOrder(); // Refresh the list after deletion
+      } else {
+        message.success('Delete Order Failed');
+      }
+    }
+  };
+
+  const confirmCancalBooking = (id: number) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this item?',
+      content: 'This action cannot be undone.',
+      okText: 'Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: () => handleDeleteBooking(id),
+    });
+  };
+
+  const confirmCancalOrder = (id: number) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this item?',
+      content: 'This action cannot be undone.',
+      okText: 'Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: () => handleDeleteOrder(id),
+    });
+  };
+
+
+  const handleConfirm = async (booking_id: number) => {
+    // Find the booking based on the selected booking ID
+    const selectedBooking = booking.find((b) => b.ID === booking_id);
     
-    const details: Details = {
-        'Kasikorn': { accountNumber: '123-5535-35', accountHolder: 'Hotel&Excess' },
-        'ThaiPanit': { accountNumber: '453-535-5345', accountHolder: 'Hotel Pre1' },
-        'PromptPay': { accountNumber: '2334-55-355', accountHolder: 'Hotel Bar123' },
-        'ScanQR': { imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg' }  // External link to the QR code
+    // Calculate room price from the selected booking (if available)
+    const roomPrice = selectedBooking?.Room?.TotalPrice || 0;
+  
+    // Filter orders related to the selected booking (if applicable)
+    const relatedOrders = order.filter((o) => o.BookingID === booking_id);
+  
+    // Calculate total price from all orders
+    const ordersTotalPrice = relatedOrders.reduce((total, currentOrder) => {
+      return total + currentOrder.Price;
+    }, 0);
+  
+    // Calculate the total amount (room price + orders total price)
+    const totalAmount = roomPrice + ordersTotalPrice;
+  
+    // Prepare payment data
+    const paymentData: PaymentInterface = {
+      PaymentDate: new Date(),
+      TotalAmount: totalAmount, // Use the calculated totalAmount here
+      PaymentMethod: "credit",
+      BookingID: booking_id,
     };
+  
+    // Send the payment data to the API
+    const res = await CreatePayments(paymentData);
+    if (res) {
+      messageApi.open({
+        type: "success",
+        content: "Data saved successfully",
+      });
+      setTimeout(() => navigate("/login/receipt"), 500);
+    } else {
+      messageApi.open({
+        type: "error",
+        content: "Error!",
+      });
+    }
+  };
+  
 
-    const handleBankButton = (type: string) => {
-        if (type in details) {
-            setBankingDetails(details[type]);
-        } else {
-            console.error('Bank type does not exist:', type);
-        }
-    };
-    
-
-    
-    return (
-        <div className="app-container">
-            <header>
-                <h1>Payment System</h1>
-                 <MdOutlinePayment className="icon-style" />
-            </header>
-            <section className="payment-section">
-                <h2>Booking</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Reservation ID</th>
-                            <th>Book ID</th>
-                            <th>Room ID</th>
-                            <th>Check-In Date</th>
-                            <th>Check-Out Date</th>
-                            <th>Total Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {bookingDetails.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.reservationID}</td>
-                                <td>{item.bookID}</td>
-                                <td>{item.roomID}</td>
-                                <td>{item.checkInDate}</td>
-                                <td>{item.checkOutDate}</td>
-                                <td>{item.totalAmount}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <div>
-                    <button onClick={() => setSelectedStatus('Confirmed')}>Confirm</button>
-                    <button onClick={() => setSelectedStatus('Pending')}>Pending</button>
-                    <button onClick={() => setSelectedStatus('Cancelled')}>Cancel</button>
-                    <button onClick={() => setShowReceipt(true)}>Show Receipt</button>
-                </div>
-                <div className="status-display">
-                    Status: <span className={`${selectedStatus.toLowerCase()}`}>{selectedStatus}</span>
-                </div>
-                {showReceipt && (
-                    <div className="receipt-section">
-                        <h2>Receipt Details</h2>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>Customer:</td>
-                                    <td>Johndev</td>
-                                </tr>
-                                <tr>
-                                    <td>RoomID:</td>
-                                    <td>210</td>
-                                </tr>
-                                <tr>
-                                    <td>Receipt ID</td>
-                                    <td>1001</td>
-                                </tr>
-                                <tr>
-                                    <td>Booking Ref</td>
-                                    <td>2001</td>
-                                </tr>
-                                <tr>
-                                    <td>Total Amount</td>
-                                    <td>$4500.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Issued</td>
-                                    <td>01-Aug</td>
-                                </tr>
-                                <tr>
-                                    <td>Due</td>
-                                    <td>15-Aug</td>
-                                </tr>
-                                <tr>
-                                    <td>Service Description</td>
-                                    <td>Restaurant</td>
-                                </tr>
-                                <tr>
-                                    <td>Service Price</td>
-                                    <td>$999.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Total Payment</td>
-                                    <td>$15,000</td>
-                                </tr>
-                                <tr>
-                                    <td>Payment Method</td>
-                                    <td>Bank Transfer</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div className="contact-info">
-                            <p>Email: hotel@example.com</p>
-                            <p>Phone: 0904562341</p>
-                            <p>Address: 1234 Siam Street, Silom, BKK</p>
-                        </div>
-                        <button onClick={handleCloseReceipt}>Close</button>
-                    </div>
-                )}
-                <div className="service-table">
-      <h2>Services</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Service ID</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {services.map(service => (
-            <tr key={service.id}>
-              <td>{service.id}</td>
-              <td>{service.description}</td>
-              <td>${service.price.toFixed(2)}</td>
-              <td>
-                <button className="btn add">Add</button>
-                <button className="btn update">Update</button>
-                <button className="btn delete">Delete</button>
-              </td>
+  return (
+    <div className="app-container">
+      {contextHolder}
+      <header>
+        <h1>Payment System</h1>
+        <MdOutlinePayment className="icon-style" />
+      </header>
+      <section className="payment-section">
+        <h2>Booking</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Book ID</th>
+              <th>CheckIn</th>
+              <th>CheckOut</th>
+              <th>Customer</th>
+              <th>Room</th>
+              <th>Room Price</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-                
-            </section>
-            <div className="dd"></div>
-            <section className="banking-section">
-                <div className="payment-container"></div>
-                <div className="banking-box">
-                    <h2>Banking</h2>
-                    <div className="cash-box">
-                        <h2>Cash</h2>
-                        <p className="contact-reception">----Contact the reception department----</p>
-                    </div>
-                    <div className="bank-logo" style={{ backgroundImage: `url(${bankLogo1})` }} onClick={() => handleBankButton('Kasikorn')}>
-                        <img src="https://www.kasikornbank.com/SiteCollectionDocuments/about/img/logo/logo.png" alt="Kasikorn Bank" />
-                        <button>Kasikorn</button>
-                    </div>
-                    <div className="bank-logo" style={{ backgroundImage: `url(${bankLogo2})` }} onClick={() => handleBankButton('ThaiPanit')}>
-                        <img src="https://www.a-p-electric.com/images/ready-template/crop-1611643734515.png" alt="Thai Panit Bank" />
-                        <button>ThaiPanit</button>
-                    </div>
-                    <div className="bank-logo" style={{ backgroundImage: `url(${bankLogo3})` }} onClick={() => handleBankButton('PromptPay')}>
-                        <img src="https://www.designil.com/wp-content/uploads/2020/04/prompt-pay-logo.png" alt="PromptPay" />
-                        <button>PromptPay</button>
-                    </div>
-                    <div className="bank-logo" style={{ backgroundImage: `url(${Screenshot})` }} onClick={() => handleBankButton('ScanQR')}>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" />
-                        <button>Scan QR</button>
-                    </div>
-                </div>
-                {bankingDetails && (
-                    <div className="detail-display">
-                         <div className="inner-frame">
-                        {bankingDetails.imageSrc ? (
-                            <img src={bankingDetails.imageSrc} alt="QR Code" />
-                            
-                        ) : (
-                            
-                            <div>
-                                <p>Account Number: {bankingDetails.accountNumber}</p>
-                                <p>Recipient Name: {bankingDetails.accountHolder}</p>
-                            </div>
-                        )}
-                        <button className="close-button" onClick={handleClose}>Close</button>
-                        </div>
-                    </div>
-                )}
-            </section>
-            {/* <footer>
-                <p>Contact Info: Email: hotel@example.com | Phone: 0904562341</p>
-            </footer> */}
+          </thead>
+          <tbody>
+            {booking.map((booking) => (
+              <tr key={booking.ID}>
+                <td>{booking.ID}</td>
+                <td>{booking.CheckIn}</td>
+                <td>{booking.CheckOut}</td>
+                <td>{booking.Customer?.Name}</td>
+                <td>{booking.Room?.Address}</td>
+                <td>{booking.Room?.TotalPrice}</td>
+                <td>
+                  <button onClick={() => handleConfirm(booking.ID)}>
+                    Confirm
+                  </button>
+
+                  <button
+                    className="btn-delete-booking"
+                    onClick={() => confirmCancalBooking(booking.ID)}
+                  >
+                    Cancel
+                  </button>
+                </td>
+                {/* <td>{item.totalAmount}</td> */}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div>
+          <div className="order-table">
+            <h2>Order</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Mene Image</th>
+                  <th>Mene</th>
+                  <th>Amount</th>
+                  <th>Price</th>
+                  {/* <th>OrderDate</th> */}
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {order.map((order) => (
+                  <tr key={order.ID}>
+                    <td>{order.ID}</td>
+                    <td>
+                      <img
+                        className="payment-menu-image"
+                        src={order.Menu?.ImageMenu}
+                        alt=""
+                      />
+                    </td>
+                    <td>{order.Menu?.MenuList}</td>
+                    <td>{order.Amount}</td>
+                    <td>{order.Price.toFixed(2)}</td>
+                    {/* <td>{order.OrderDate}</td> */}
+                    <td>
+                      <button
+                        className="btn-delete-order"
+                        onClick={() => confirmCancalOrder(order.ID)}
+                      >
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* <button onClick={() => setSelectedStatus("Pending")}>Pending</button> */}
+          {/* <button onClick={() => setSelectedStatus("Cancelled")}>Cancel</button> */}
+          {/* <button onClick={() => setShowReceipt(true)}>Show Receipt</button> */}
         </div>
-    );
+        {/* <div className="status-display">
+          Status:{" "}
+          <span className={`${selectedStatus.toLowerCase()}`}>
+            {selectedStatus}
+          </span>
+        </div> */}
+      </section>
+    </div>
+  );
 }
 export default Payment;

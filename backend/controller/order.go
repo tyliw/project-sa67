@@ -38,14 +38,16 @@ func GetOrder(c *gin.Context) {
 
 // GET /orders
 func ListOrders(c *gin.Context) {
-	var orders []entity.Order
+	var bookings []entity.Order
 
-	if err := config.DB().Find(&orders).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": orders})
+	db := config.DB()
+	results := db.Preload("Menu").Find(&bookings)
+    if results.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": results.Error.Error()})
+        return
+    }
+	
+    c.JSON(http.StatusOK, bookings)
 }
 
 // DELETE /orders/:id

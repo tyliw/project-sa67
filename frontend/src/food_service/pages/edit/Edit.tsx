@@ -23,9 +23,7 @@ const Edit: React.FC = () => {
   const [foodCategories, setFoodCategories] = useState<FoodCategoryInterface[]>([]);
   const [editingKey, setEditingKey] = useState<number | null>(null);
   const [editingRecord, setEditingRecord] = useState<MenuInterface | null>(null);
-  // const [imageFile, setImageFile] = useState<File | null>(null); 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  // const [showCreate, setShowCreate] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 

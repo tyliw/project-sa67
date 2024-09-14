@@ -1,7 +1,7 @@
 export interface PaymentInterface {
-    ID: number;
-    BookingID: number
+    ID?: number;
+	PaymentDate: Date
 	TotalAmount: number
-	PaymentDate: string
 	PaymentMethod: string
+    BookingID: number
 }
