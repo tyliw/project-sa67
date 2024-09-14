@@ -10,7 +10,7 @@ git remote add origin https://github.com/tyliw/project-sa67.git
 
 git push -u origin main
 
-เอาไว้อัปโหลดไฟล์ล่าสุดจาก Github /git pull origin main/
+เอาไว้อัปโหลดไฟล์ล่าสุดจาก Github >> git pull origin main
 
 //Frontend Install List//
 
