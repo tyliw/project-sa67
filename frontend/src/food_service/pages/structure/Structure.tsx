@@ -3,10 +3,11 @@ import MealButtons from '../menu_page/MealButtons';
 import FoodList from '../menu_page/listMenu/FoodList';
 import { MealInterface } from '../../interfaces/IMeal'; // Import MealInterface for type checking
 import './index.css';
+import { useLocation } from 'react-router-dom';
 
-interface StructurecopyProps {
-  bookingID: number | null;
-}
+// interface StructurecopyProps {
+//   bookingID: number | null;
+// }
 
 // Example meal data
 const breakfastCategory: MealInterface = {
@@ -14,9 +15,11 @@ const breakfastCategory: MealInterface = {
   Name: 'breakfast',
 };
 
-const Structure: React.FC<StructurecopyProps> = ({ bookingID }) => {
+const Structure: React.FC = () => {
   // Set default category to breakfast
   const [selectedCategory, setSelectedCategory] = useState<MealInterface | null>(breakfastCategory);
+  const location = useLocation(); // <-- Use useLocation to get state
+  const { bookingID } = location.state || {}; // <-- Extract bookingID from state
 
   const handleCategoryClick = (category: MealInterface | null) => {
     setSelectedCategory(category); // Set the full MealInterface object as selected category

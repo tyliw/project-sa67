@@ -6,9 +6,9 @@ import { BookingInterface } from '../../../room/booking/interfaces/IBooking';
 import { GetBookings } from '../../../room/booking/services/https';
 import './index.css';
 
-interface BookingProps {
-  onBookingSelect: (id: number) => void;
-}
+// interface BookingProps {
+//   onBookingSelect: (id: number) => void;
+// }
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -21,7 +21,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const BookingList: React.FC<BookingProps> = ({ onBookingSelect }) => {
+const BookingList: React.FC = () => {
   const [booking, setBooking] = useState<BookingInterface[]>([]);
   const navigate = useNavigate(); // <-- Add this
   const location = useLocation();
@@ -60,8 +60,8 @@ const BookingList: React.FC<BookingProps> = ({ onBookingSelect }) => {
                 className="booking-item-crad"
                 onClick={() => {
                   if (book.ID !== undefined) {
-                    onBookingSelect(book.ID);
-                    navigate(`${location.pathname}/structure/${book.ID}`);
+                    // onBookingSelect(book.ID);
+                    navigate(`${location.pathname}/structure/${book.ID}`, { state: {bookingID: book.ID} });
                   }
                 }}
               >

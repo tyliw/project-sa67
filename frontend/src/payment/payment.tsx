@@ -75,12 +75,13 @@ function Payment() {
   console.log("order for payment: ", order);
   console.log("room for payment: ", room);
 
-  const handleDeleteBooking = async (booking: BookingInterface) => {
+  const handleDeleteBooking = async (booking: BookingInterface, RoomID: number) => {
     if (booking.ID) {
       const success = await DeleteBookingByID(booking.ID);
       if (success) {
         
         const roomUpdate: RoomInterface = {
+          ID: RoomID,
           Status: "Vacant", // Update status to Invalid
         };
 
@@ -110,14 +111,14 @@ function Payment() {
     }
   };
 
-  const confirmCancalBooking = (booking: BookingInterface) => {
+  const confirmCancalBooking = (booking: BookingInterface, RoomID: number) => {
     Modal.confirm({
       title: 'Are you sure you want to delete this item?',
       content: 'This action cannot be undone.',
       okText: 'Delete',
       okType: 'danger',
       cancelText: 'Cancel',
-      onOk: () => handleDeleteBooking(booking),
+      onOk: () => handleDeleteBooking(booking, RoomID),
     });
   };
 
@@ -233,7 +234,7 @@ function Payment() {
 
                       <button
                         className="btn-delete-booking"
-                        onClick={() => confirmCancalBooking(b)}
+                        onClick={() => confirmCancalBooking(b, b.RoomID as number)}
                       >
                         Cancel
                       </button>

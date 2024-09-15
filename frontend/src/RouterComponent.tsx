@@ -1,4 +1,4 @@
-import React, { StrictMode, useState } from 'react';
+import React, { StrictMode } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './app';
 import Login from './authentication/login/login';
@@ -15,11 +15,11 @@ import CustomerCreate from './room/customer';
 
 
 const RouterComponent: React.FC = () => {
-  const [selectedBookingID, setSelectedBookingID] = useState<number | null>(null);
+  // const [selectedBookingID, setSelectedBookingID] = useState<number | null>(null);
 
-  const handleBookingSelect = (id: number) => {
-    setSelectedBookingID(id);
-  };
+  // const handleBookingSelect = (id: number) => {
+  //   setSelectedBookingID(id);
+  // };
 
   const router = createBrowserRouter([
     {
@@ -47,11 +47,11 @@ const RouterComponent: React.FC = () => {
         // Food Service
         {
           path: 'food-service',
-          element: <BookingList onBookingSelect={handleBookingSelect} />,
+          element: <BookingList />,
         },
         {
           path: 'food-service/structure/:bookingID',
-          element: <Structure bookingID={selectedBookingID} />,
+          element: <Structure />,
         },
         { path: 'manage-data', 
           element: <Edit /> 
