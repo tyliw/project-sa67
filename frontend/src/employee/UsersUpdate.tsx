@@ -34,7 +34,7 @@ export default function UsersUpdate() {
       if (res) {
         messageApi.success("อัปเดตข้อมูลสำเร็จ!");
         setTimeout(() => {
-          navigate("/"); // เปลี่ยนเส้นทางไปหน้าแรก
+          navigate("/login/employee"); // เปลี่ยนเส้นทางไปหน้าแรก
         }, 2000);
       } else {
         messageApi.error("อัปเดตข้อมูลไม่สำเร็จ!");
@@ -206,7 +206,7 @@ export default function UsersUpdate() {
             <Col>
               <Form.Item>
                 <Space>
-                  <Button onClick={() => navigate("/")} htmlType="button">
+                  <Button onClick={() => navigate("/login/employee")} htmlType="button">
                     ยกเลิก
                   </Button>
                   <Button type="primary" htmlType="submit">

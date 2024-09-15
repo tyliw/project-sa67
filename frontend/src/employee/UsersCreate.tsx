@@ -60,7 +60,7 @@ export default function UserCreate() {
           type: "success",
           content: "Data saved successfully",
         });
-        setTimeout(() => navigate("/"), 500);
+        setTimeout(() => navigate("/login/employee"), 500);
       } else {
         messageApi.open({
           type: "error",
@@ -205,7 +205,7 @@ export default function UserCreate() {
             <Col style={{ marginTop: "40px" }}>
               <Form.Item>
                 <Space>
-                  <NavLink to="/">
+                  <NavLink to="/login/employee">
                     <Button style={{ marginRight: "10px" }}>Cancel</Button>
                   </NavLink>
                   <Button

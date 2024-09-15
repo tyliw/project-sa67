@@ -52,7 +52,7 @@ export default function Users() {
 
   const handleEmployeeUpdate = (id: number) => {
     if (id) {
-      window.location.href = `/update/${id}`;
+      window.location.href = `/login/employee/update/${id}`;
     }
   };
 
@@ -91,7 +91,7 @@ export default function Users() {
               </Typography>
             </Box>
             <Box sx={{ mb: 2 }}>
-              <NavLink to="/create">
+              <NavLink to='/login/employee/create'>
                 <Button variant="contained" size="large" sx={{ px: 3, py: 1 }}>
                   <PlusOutlined />
                   Create

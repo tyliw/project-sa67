@@ -12,7 +12,6 @@ import {
   DatePicker,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { GendersInterface } from "../../interfaces/IGender";
 import { CustomersInterface } from "../../interfaces/ICustomer";
 import { BookingInterface } from "../../interfaces/IBooking";
 import {

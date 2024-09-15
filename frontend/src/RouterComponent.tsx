@@ -12,6 +12,8 @@ import Receipt from './payment/receipt/receipt';
 import SignUpPages from './authentication/Register/SignUpPages';
 import Booking from './room/booking/pages/booking';
 import CustomerCreate from './room/customer';
+import UserCreate from './employee/UsersCreate';
+import UsersUpdate from './employee/UsersUpdate';
 
 
 const RouterComponent: React.FC = () => {
@@ -61,7 +63,9 @@ const RouterComponent: React.FC = () => {
         },
 
         // Employee
-        { path: 'employee/*', element: <Home /> },
+        { path: 'employee', element: <Home /> },
+        { path: 'employee/create', element: <UserCreate /> },
+        { path: 'employee/update/:id', element: <UsersUpdate /> },
 
         // Payment
         { path: 'payment', element: <Payment /> },
