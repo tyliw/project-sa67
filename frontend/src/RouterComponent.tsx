@@ -9,7 +9,7 @@ import Create from './food_service/pages/create/Create';
 import Home from './employee/Home';
 import Payment from './payment/payment';
 import Receipt from './payment/receipt/receipt';
-import SignUpPages from './authentication/Register/SignUpPages';
+import SignUpPages from './authentication/register/SignUpPages';
 import Booking from './room/booking/pages/booking';
 import CustomerCreate from './room/customer';
 import UserCreate from './employee/UsersCreate';

@@ -8,16 +8,22 @@ import {
 } from "../food_service/services/https/OrderAPI";
 import { OrderInterface } from "../food_service/interfaces/IOrder";
 import "./App.css";
-import { CreatePayments } from "./services/https/PaymentAPI";
+import { CreatePayments, GetPayments } from "./services/https/PaymentAPI";
 import { message, Modal } from "antd";
 import { BookingInterface } from "../room/booking/interfaces/IBooking";
-import { DeleteBookingByID, GetBookings, GetRooms, UpdateRoom } from "../room/booking/services/https";
+import {
+  DeleteBookingByID,
+  GetBookings,
+  GetRooms,
+  UpdateRoom,
+} from "../room/booking/services/https";
 import { RoomInterface } from "../room/booking/interfaces/IRoom";
 
 function Payment() {
   const [booking, setBooking] = useState<BookingInterface[]>([]);
   const [room, setRoom] = useState<RoomInterface[]>([]);
   const [order, setOrder] = useState<OrderInterface[]>([]);
+  const [payment, setPayment] = useState<PaymentInterface[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
 
@@ -65,37 +71,55 @@ function Payment() {
     }
   };
 
+  const fetchPayment = async () => {
+    try {
+      const response = await GetPayments();
+      console.log("API payment response for payment: ", response);
+      if (Array.isArray(response)) {
+        setPayment(response);
+      } else {
+        console.error("API did not return expected array format:", response);
+        setPayment([]);
+      }
+    } catch (error) {
+      console.error("Error fetching booking data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchBooking();
     fetchRoom();
     fetchOrder();
+    fetchPayment();
   }, []); // Empty array ensures it only runs on component mount
 
   console.log("booking for payment: ", booking);
   console.log("order for payment: ", order);
   console.log("room for payment: ", room);
 
-  const handleDeleteBooking = async (booking: BookingInterface, RoomID: number) => {
+  const handleDeleteBooking = async (
+    booking: BookingInterface,
+    RoomID: number
+  ) => {
     if (booking.ID) {
       const success = await DeleteBookingByID(booking.ID);
       if (success) {
-        
         const roomUpdate: RoomInterface = {
           ID: RoomID,
           Status: "Vacant", // Update status to Invalid
         };
 
         const roomPach = await UpdateRoom(roomUpdate);
-        console.log("UpdateRoom form payment:", roomPach)
+        console.log("UpdateRoom form payment:", roomPach);
         if (roomPach) {
-          message.success('Delete Booking Successfully');
+          message.success("Delete Booking Successfully");
           fetchBooking(); // Refresh the list after deletion
           fetchOrder();
-        }else {
-          message.success('Update Room Failed');
+        } else {
+          message.success("Update Room Failed");
         }
       } else {
-        message.success('Delete Booking Failed');
+        message.success("Delete Booking Failed");
       }
     }
   };
@@ -104,89 +128,107 @@ function Payment() {
     if (id) {
       const success = await DeleteOrderByID(id);
       if (success) {
-        message.success('Delete Order Successfully');
+        message.success("Delete Order Successfully");
         fetchOrder(); // Refresh the list after deletion
       } else {
-        message.success('Delete Order Failed');
+        message.success("Delete Order Failed");
       }
     }
   };
 
   const confirmCancalBooking = (booking: BookingInterface, RoomID: number) => {
     Modal.confirm({
-      title: 'Are you sure you want to delete this item?',
-      content: 'This action cannot be undone.',
-      okText: 'Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
+      title: "Are you sure you want to delete this item?",
+      content: "This action cannot be undone.",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
       onOk: () => handleDeleteBooking(booking, RoomID),
     });
   };
 
   const confirmCancalOrder = (id: number) => {
     Modal.confirm({
-      title: 'Are you sure you want to delete this item?',
-      content: 'This action cannot be undone.',
-      okText: 'Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
+      title: "Are you sure you want to delete this item?",
+      content: "This action cannot be undone.",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
       onOk: () => handleDeleteOrder(id),
     });
   };
 
-  const handleConfirm = async (booking_id: number) => {
+  const handleConfirm = async (booking_id: number, room_id: number) => {
     const selectedBooking = booking.find((b) => b.ID === booking_id);
-  
+
     if (!selectedBooking) {
       console.error("Selected booking not found");
       return;
     }
-  
+
     const roomID = selectedBooking.Room?.ID;
     let roomPrice: number = 0; // Initialize as a number
-  
+
     if (roomID) {
       // Find room details from the room state
-      const roomDetails = room.find(r => r.ID === roomID);
-  
+      const roomDetails = room.find((r) => r.ID === roomID);
+
       // Ensure roomPrice is a number
-      roomPrice = roomDetails?.RoomTypes?.PricePerNight 
-        ? Number(roomDetails.RoomTypes.PricePerNight) 
+      roomPrice = roomDetails?.RoomTypes?.PricePerNight
+        ? Number(roomDetails.RoomTypes.PricePerNight)
         : 0;
     }
-  
+
     console.log("Room Price: ", roomPrice);
-  
+
     const relatedOrders = order.filter((o) => o.BookingID === booking_id);
     const ordersTotalPrice = relatedOrders.reduce((total, currentOrder) => {
       // Ensure Price is a number
-      const orderPrice = Number(currentOrder.Price) || 0; 
+      const orderPrice = Number(currentOrder.Price) || 0;
       return total + orderPrice;
     }, 0);
-  
+
     console.log("Orders Total Price: ", ordersTotalPrice);
-  
+
     const totalAmount = roomPrice + ordersTotalPrice;
-  
+
     console.log("Total Amount: ", totalAmount);
-  
+
     const paymentData: PaymentInterface = {
       PaymentDate: new Date(),
       TotalAmount: totalAmount,
       PaymentMethod: "credit",
       BookingID: booking_id,
     };
-  
+
     const res = await CreatePayments(paymentData);
     console.log("CreatePayments Response: ", res);
-  
+
     if (res) {
+      const roomUpdate: RoomInterface = {
+        ID: room_id,
+        Status: "Vacant", // Update status to Invalid
+      };
+
+      const roomPach = await UpdateRoom(roomUpdate);
+      console.log("UpdateRoom form payment:", roomPach);
       messageApi.open({
         type: "success",
         content: "Data saved successfully",
       });
-  
-      setTimeout(() => navigate("/login/receipt", { state: { paymentID: res.data.ID, bookingID: booking_id, roomID: roomID } }), 500);
+      fetchBooking();
+      fetchOrder();
+      setTimeout(
+        () =>
+          navigate("/login/receipt", {
+            state: {
+              paymentID: res.data.ID,
+              bookingID: booking_id,
+              roomID: roomID,
+            },
+          }),
+        500
+      );
     } else {
       messageApi.open({
         type: "error",
@@ -194,7 +236,7 @@ function Payment() {
       });
     }
   };
-  
+
   return (
     <div className="app-container">
       {contextHolder}
@@ -218,36 +260,49 @@ function Payment() {
               </tr>
             </thead>
             <tbody>
-              {booking.map((b) => {
-                const matchedRoom = room.find(r => r.ID === b.Room?.ID);
-                return (
-                  <tr key={b.ID}>
-                    <td>{b.ID}</td>
-                    <td>{b.CheckIn}</td>
-                    <td>{b.CheckOut}</td>
-                    <td>{b.Customer?.Name}</td>
-                    <td>{matchedRoom?.Address}</td>
-                    <td>{matchedRoom?.RoomTypes?.PricePerNight}</td>
-                    <td>
-                      <button onClick={() => handleConfirm(b.ID as number)}>
-                        Confirm
-                      </button>
+              {booking
+                .filter((b) => {
+                  const isNotCheckedOut = !payment.some(
+                    (pay) => pay.BookingID === b.ID
+                  );
 
-                      <button
-                        className="btn-delete-booking"
-                        onClick={() => confirmCancalBooking(b, b.RoomID as number)}
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return isNotCheckedOut;
+                })
+                .map((b) => {
+                  const matchedRoom = room.find((r) => r.ID === b.Room?.ID);
+                  return (
+                    <tr key={b.ID}>
+                      <td>{b.ID}</td>
+                      <td>{b.CheckIn}</td>
+                      <td>{b.CheckOut}</td>
+                      <td>{b.Customer?.Name}</td>
+                      <td>{matchedRoom?.Address}</td>
+                      <td>{matchedRoom?.RoomTypes?.PricePerNight}</td>
+                      <td>
+                        <button
+                          onClick={() =>
+                            handleConfirm(b.ID as number, b.RoomID as number)
+                          }
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          className="btn-delete-booking"
+                          onClick={() =>
+                            confirmCancalBooking(b, b.RoomID as number)
+                          }
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
         <div>
-            <h2>Order</h2>
+          <h2>Order</h2>
           <div className="order-table">
             <table>
               <thead>
@@ -262,30 +317,44 @@ function Payment() {
                 </tr>
               </thead>
               <tbody>
-                {order.map((o) => (
-                  <tr key={o.ID}>
-                    <td>{o.ID}</td>
-                    <td>
-                      <img
-                        className="payment-menu-image"
-                        src={o.Menu?.ImageMenu}
-                        alt=""
-                      />
-                    </td>
-                    <td>{o.Menu?.MenuList}</td>
-                    <td>{o.Amount}</td>
-                    <td>{o.Price.toFixed(2)}</td>
-                    <td>{o.BookingID}</td>
-                    <td>
-                      <button
-                        className="btn-delete-order"
-                        onClick={() => confirmCancalOrder(o.ID as number)}
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {order
+                  .filter((o) => {
+                    // ค้นหาการจองที่เกี่ยวข้องกับคำสั่งซื้อ
+                    const bookingForOrder = booking.find(
+                      (b) => b.ID === o.BookingID
+                    );
+
+                    // ตรวจสอบว่าการจองยังไม่ได้เช็คเอาท์
+                    const isNotCheckedOut = !payment.some(
+                      (pay) => pay.BookingID === o.BookingID
+                    );
+
+                    return bookingForOrder && isNotCheckedOut;
+                  })
+                  .map((o) => (
+                    <tr key={o.ID}>
+                      <td>{o.ID}</td>
+                      <td>
+                        <img
+                          className="payment-menu-image"
+                          src={o.Menu?.ImageMenu}
+                          alt=""
+                        />
+                      </td>
+                      <td>{o.Menu?.MenuList}</td>
+                      <td>{o.Amount}</td>
+                      <td>{o.Price.toFixed(2)}</td>
+                      <td>{o.BookingID}</td>
+                      <td>
+                        <button
+                          className="btn-delete-order"
+                          onClick={() => confirmCancalOrder(o.ID as number)}
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

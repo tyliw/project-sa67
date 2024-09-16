@@ -4,6 +4,7 @@ import { SignIn } from "../services/https";
 import { SignInInterface } from "../interface/SignIn";
 import logo from "../../assets/logo.png";
 import { GetEmployeeById } from "../../employee/services/https";
+import './index.css'
 
 function SignInPages() {
   const navigate = useNavigate();
@@ -45,67 +46,69 @@ function SignInPages() {
   return (
     <>
       {contextHolder}
+      <div className="page-login"> 
+        <Flex justify="center" align="center" className="login">
+          <Card className="card-login" style={{ width: 500, gap:10 }}>
+            <Row align={"middle"} justify={"center"} style={{ height: "400px", gap:"30px" }}>
+              <Col xs={24} sm={24} md={24} lg={24} xl={24} style={{display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <img
+                  alt="logo"
+                  style={{ width: "80%" }}
+                  src={logo}
+                  className="images-logo"
+                />
+              </Col>
 
-      <Flex justify="center" align="center" className="login">
-        <Card className="card-login" style={{ width: 500 }}>
-          <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
-            <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-              <img
-                alt="logo"
-                style={{ width: "80%" }}
-                src={logo}
-                className="images-logo"
-              />
-            </Col>
-
-            <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-              <Form
-                name="basic"
-                onFinish={onFinish}
-                autoComplete="off"
-                layout="vertical"
-              >
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[
-                    { required: true, message: "Please input your username!" },
-                  ]}
+              <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                <Form
+                  name="basic"
+                  onFinish={onFinish}
+                  autoComplete="off"
+                  layout="vertical"
+                  style={{borderRadius:0, boxShadow:'none'}}
                 >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  rules={[
-                    { required: true, message: "Please input your password!" },
-                  ]}
-                >
-                  <Input.Password />
-                </Form.Item>
-
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="login-form-button"
-                    style={{ marginBottom: 20 }}
+                  <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                      { required: true, message: "Please input your username!" },
+                    ]}
                   >
-                    Log in
-                  </Button>
-                  Or <a onClick={() => navigate("/signup")}>signup now !</a>
-                </Form.Item>
-              </Form>
-            </Col>   
-              <Link to='/login/dashboard'>
-                  <Button>
-                    skip login
-                  </Button>
-            </Link>
-          </Row>
-        </Card>
-      </Flex>
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[
+                      { required: true, message: "Please input your password!" },
+                    ]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
+
+                  <Form.Item >
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="login-form-button"
+                      style={{marginRight:5}}
+                    >
+                      Log in
+                    </Button>
+                    Or <a onClick={() => navigate("/signup")}>signup now !</a>
+                  </Form.Item>
+                </Form>
+              </Col>   
+                <Link to='/login/dashboard'>
+                    <Button>
+                      skip login
+                    </Button>
+              </Link>
+            </Row>
+          </Card>
+        </Flex>
+      </div>
     </>
   );
 }
