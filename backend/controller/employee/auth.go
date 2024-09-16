@@ -19,7 +19,7 @@ type (
        Email    string `json:"email"`
        Password string `json:"password"`
    }
-   
+
    signUp struct {
         FirstName       string
         LastName        string
@@ -106,7 +106,7 @@ func SignIn(c *gin.Context) {
 
 	// ค้นหา employee ด้วย Email ที่ผู้ใช้กรอกเข้ามา
 	if err := config.DB().Where("email = ?", payload.Email).First(&employee).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Employee not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email not found"})
 		return
 	}
 
