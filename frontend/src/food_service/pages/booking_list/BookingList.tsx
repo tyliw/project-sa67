@@ -31,6 +31,7 @@ const BookingList: React.FC = () => {
     try {
       const response = await GetBookings();
       if (Array.isArray(response)) {
+        console.log("GetBookings for Food: ", response)
         setBooking(response);
       } else {
         setBooking([]);
@@ -53,7 +54,7 @@ const BookingList: React.FC = () => {
         <Divider />
         <div className="booking-list-page">
           {booking
-            .filter((book) => book.CheckOut === '0001-01-01T00:00:00Z')
+            .filter((book) => book.Room?.Status === 'Occupied')
             .map((book) => (
               <div
                 key={book.ID}
@@ -73,7 +74,7 @@ const BookingList: React.FC = () => {
                       <span>{book.Customer?.Name}</span>
                     </div>
                     <div className="name">
-                      <h2>Room Type</h2>
+                      <h2>Room Status</h2>
                       <span>{book.Room?.Status}</span>
                     </div>
                     <div className="seat">
