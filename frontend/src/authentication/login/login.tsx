@@ -30,7 +30,9 @@ function SignInPages() {
         console.log("emp values from SignIn: ", emp);
   
         // ส่งข้อมูลไปยังหน้าใหม่
-        navigate("/login/dashboard", { state: { employeeData: emp.ID } });
+        setTimeout(() => {
+          navigate("/login/dashboard", { state: {employeeData: emp} } );
+        }, 100);
       } else {
         messageApi.error(res?.data?.error || "Unknown error occurred");
       }
