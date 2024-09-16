@@ -1,10 +1,9 @@
-package controller
+package room
 
 import (
 	"net/http"
 	"project-sa67/config"
-	entity "project-sa67/entity/room"
-
+	"project-sa67/entity/room"
 	"github.com/gin-gonic/gin"
 )
 

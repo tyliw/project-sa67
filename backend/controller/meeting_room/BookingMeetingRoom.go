@@ -1,4 +1,4 @@
-package controller
+package meeting_room
 
 import (
 	"project-sa67/config"

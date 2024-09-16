@@ -1,4 +1,4 @@
-package controller
+package meeting_room
 
 import (
 	"net/http"

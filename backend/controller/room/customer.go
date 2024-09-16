@@ -1,4 +1,4 @@
-package controller
+package room
 
 import (
 	"net/http"

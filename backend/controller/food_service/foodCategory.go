@@ -1,4 +1,4 @@
-package controller
+package food_service
 
 import (
 	"net/http"
