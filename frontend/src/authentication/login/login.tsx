@@ -32,7 +32,7 @@ function SignInPages() {
         // ส่งข้อมูลไปยังหน้าใหม่
         setTimeout(() => {
           navigate("/login/dashboard", { state: {employeeData: emp} } );
-        }, 100);
+        }, 750);
       } else {
         messageApi.error(res?.data?.error || "Unknown error occurred");
       }
