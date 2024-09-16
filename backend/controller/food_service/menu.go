@@ -9,7 +9,7 @@ import (
 
 // POST /menus
 func CreateMenu(c *gin.Context) {
-    var menu entity.Menu
+    var menu food_service.Menu
     if err := c.ShouldBindJSON(&menu); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
@@ -17,21 +17,21 @@ func CreateMenu(c *gin.Context) {
 
     db := config.DB()
 
-    var meal entity.Meal
+    var meal food_service.Meal
     db.First(&meal, menu.MealID)
     if meal.ID == 0 {
         c.JSON(http.StatusNotFound, gin.H{"error": "meal not found"})
         return
     }
 
-    var foodCategory entity.FoodCategory
+    var foodCategory food_service.FoodCategory
     db.First(&foodCategory, menu.FoodCategoryID)
     if foodCategory.ID == 0 {
         c.JSON(http.StatusNotFound, gin.H{"error": "foodCategory not found"})
         return
     }
 
-    m := entity.Menu{
+    m := food_service.Menu{
         MenuList:  menu.MenuList,
         Price:     menu.Price,
         Description: menu.Description,
@@ -53,7 +53,7 @@ func CreateMenu(c *gin.Context) {
 
 // GET /menus/:id
 func GetMenu(c *gin.Context) {
-	var menu entity.Menu
+	var menu food_service.Menu
 	id := c.Param("id")
 
 	db := config.DB()
@@ -72,7 +72,7 @@ func GetMenu(c *gin.Context) {
 
 // GET /menus
 func ListMenus(c *gin.Context) {
-    var menu []entity.Menu
+    var menu []food_service.Menu
 
     db := config.DB()
     results := db.Preload("Meal").Preload("FoodCategory").Find(&menu)
@@ -85,18 +85,31 @@ func ListMenus(c *gin.Context) {
 
 // DELETE /menus/:id
 func DeleteMenu(c *gin.Context) {
-	id := c.Param("id")
-	if tx := config.DB().Delete(&entity.Menu{}, id); tx.RowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Menu not found"})
-		return
-	}
+    id := c.Param("id")
+    db := config.DB()
 
-	c.JSON(http.StatusOK, gin.H{"data": id})
+    // Find the menu
+    var menu food_service.Menu
+    if tx := db.First(&menu, id); tx.RowsAffected == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Menu not found"})
+        return
+    }
+
+    // Soft delete the related orders
+    db.Model(&food_service.Order{}).Where("menu_id = ?", id).Delete(&food_service.Order{})
+
+    // Soft delete the menu
+    if tx := db.Delete(&menu); tx.RowsAffected == 0 {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete menu"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"data": id})
 }
 
 // PATCH /menus/:id
 func UpdateMenu(c *gin.Context) {
-    var menu entity.Menu
+    var menu food_service.Menu
     MenuID := c.Param("id")
 
     db := config.DB()
@@ -124,7 +137,7 @@ func UpdateMenu(c *gin.Context) {
     }
 
     // Use db.Model(&menu).Updates() to update only the specified fields
-    result = db.Model(&menu).Updates(entity.Menu{
+    result = db.Model(&menu).Updates(food_service.Menu{
         MenuList:       updateData.MenuList,
         Price:          updateData.Price,
         Description:    updateData.Description,

@@ -90,6 +90,7 @@ function Payment() {
         if (roomPach) {
           message.success('Delete Booking Successfully');
           fetchBooking(); // Refresh the list after deletion
+          fetchOrder();
         }else {
           message.success('Update Room Failed');
         }
@@ -228,7 +229,7 @@ function Payment() {
                     <td>{matchedRoom?.Address}</td>
                     <td>{matchedRoom?.RoomTypes?.PricePerNight}</td>
                     <td>
-                      <button onClick={() => handleConfirm(b.ID)}>
+                      <button onClick={() => handleConfirm(b.ID as number)}>
                         Confirm
                       </button>
 

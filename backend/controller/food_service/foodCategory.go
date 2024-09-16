@@ -9,7 +9,7 @@ import (
 
 // GET /food-categories
 func ListFoodCategories(c *gin.Context) {
-	var categories []entity.FoodCategory
+	var categories []food_service.FoodCategory
 
 	if err := config.DB().Find(&categories).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -21,7 +21,7 @@ func ListFoodCategories(c *gin.Context) {
 
 // GET /food-categories/:id
 func GetFoodCategory(c *gin.Context) {
-	var category entity.FoodCategory
+	var category food_service.FoodCategory
 	id := c.Param("id")
 
 	if err := config.DB().First(&category, id).Error; err != nil {
@@ -34,7 +34,7 @@ func GetFoodCategory(c *gin.Context) {
 
 // POST /food-categories
 func CreateFoodCategory(c *gin.Context) {
-	var category entity.FoodCategory
+	var category food_service.FoodCategory
 	if err := c.ShouldBindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -50,7 +50,7 @@ func CreateFoodCategory(c *gin.Context) {
 
 // PATCH /food-categories/:id
 func UpdateFoodCategory(c *gin.Context) {
-	var category entity.FoodCategory
+	var category food_service.FoodCategory
 	id := c.Param("id")
 
 	if err := config.DB().First(&category, id).Error; err != nil {
@@ -74,7 +74,7 @@ func UpdateFoodCategory(c *gin.Context) {
 // DELETE /food-categories/:id
 func DeleteFoodCategory(c *gin.Context) {
 	id := c.Param("id")
-	if tx := config.DB().Delete(&entity.FoodCategory{}, id); tx.RowsAffected == 0 {
+	if tx := config.DB().Delete(&food_service.FoodCategory{}, id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
 		return
 	}

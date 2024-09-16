@@ -1,4 +1,4 @@
-package entity
+package food_service
 
 import (
 	"gorm.io/gorm"

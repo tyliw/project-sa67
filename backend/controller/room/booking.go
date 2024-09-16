@@ -3,8 +3,8 @@ package room
 import (
 	"net/http"
 	"project-sa67/config"
-	entity "project-sa67/entity/room"
-
+	"project-sa67/entity/room"
+	"project-sa67/entity/food_service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,13 +56,27 @@ func ListBookings(c *gin.Context) {
 // DELETE /bookings/:id
 func DeleteBooking(c *gin.Context) {
 	id := c.Param("id")
-	if tx := config.DB().Delete(&entity.Booking{}, id); tx.RowsAffected == 0 {
+	db := config.DB()
+
+	// Find the booking
+	var booking entity.Booking
+	if tx := db.First(&booking, id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Booking not found"})
+		return
+	}
+
+	// Soft delete the related orders
+	db.Model(&food_service.Order{}).Where("booking_id = ?", id).Delete(&food_service.Order{})
+
+	// Soft delete the booking itself
+	if tx := db.Delete(&booking); tx.RowsAffected == 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete booking"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": id})
 }
+
 
 // PATCH /bookings/:id
 func UpdateBooking(c *gin.Context) {

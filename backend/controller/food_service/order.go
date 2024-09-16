@@ -9,7 +9,7 @@ import (
 
 // POST /orders
 func CreateOrder(c *gin.Context) {
-	var order entity.Order
+	var order food_service.Order
 	if err := c.ShouldBindJSON(&order); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -25,7 +25,7 @@ func CreateOrder(c *gin.Context) {
 
 // GET /orders/:id
 func GetOrder(c *gin.Context) {
-	var order entity.Order
+	var order food_service.Order
 	id := c.Param("id")
 
 	if err := config.DB().First(&order, id).Error; err != nil {
@@ -38,7 +38,7 @@ func GetOrder(c *gin.Context) {
 
 // GET /orders
 func ListOrders(c *gin.Context) {
-	var bookings []entity.Order
+	var bookings []food_service.Order
 
 	db := config.DB()
 	results := db.Preload("Menu").Find(&bookings)
@@ -53,7 +53,7 @@ func ListOrders(c *gin.Context) {
 // DELETE /orders/:id
 func DeleteOrder(c *gin.Context) {
 	id := c.Param("id")
-	if tx := config.DB().Delete(&entity.Order{}, id); tx.RowsAffected == 0 {
+	if tx := config.DB().Delete(&food_service.Order{}, id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
 	}
@@ -63,7 +63,7 @@ func DeleteOrder(c *gin.Context) {
 
 // PATCH /orders/:id
 func UpdateOrder(c *gin.Context) {
-	var order entity.Order
+	var order food_service.Order
 	id := c.Param("id")
 
 	if err := config.DB().First(&order, id).Error; err != nil {

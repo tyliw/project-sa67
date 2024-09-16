@@ -1,4 +1,4 @@
-package entity
+package food_service
 
 import (
 	"time"
@@ -14,10 +14,10 @@ import (
 
 	// MenuID ทำหน้าที่เป็น FK
 	MenuID 		uint
-	Menu   		*Menu  		`gorm:"foreignKey: MenuID"`
+	Menu   		*Menu  			`gorm:"foreignKey:MenuID;constraint:OnDelete:CASCADE;"`
 
 	// BookingID ทำหน้าที่เป็น FK
 	BookingID	uint
-	Booking   	*entity.Booking  	`gorm:"foreignKey: BookingID"`
+	Booking   	*entity.Booking	`gorm:"foreignKey:BookingID;constraint:OnDelete:CASCADE;"`
 
  }

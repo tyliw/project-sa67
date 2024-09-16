@@ -9,7 +9,7 @@ import (
 
 // GET /meals
 func ListMeals(c *gin.Context) {
-	var meals []entity.Meal
+	var meals []food_service.Meal
 
 	if err := config.DB().Find(&meals).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -21,7 +21,7 @@ func ListMeals(c *gin.Context) {
 
 // GET /meals/:id
 func GetMeal(c *gin.Context) {
-	var meal entity.Meal
+	var meal food_service.Meal
 	id := c.Param("id")
 
 	if err := config.DB().First(&meal, id).Error; err != nil {
@@ -34,7 +34,7 @@ func GetMeal(c *gin.Context) {
 
 // POST /meals
 func CreateMeal(c *gin.Context) {
-	var meal entity.Meal
+	var meal food_service.Meal
 	if err := c.ShouldBindJSON(&meal); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -50,7 +50,7 @@ func CreateMeal(c *gin.Context) {
 
 // PATCH /meals/:id
 func UpdateMeal(c *gin.Context) {
-	var meal entity.Meal
+	var meal food_service.Meal
 	id := c.Param("id")
 	
 	if err := config.DB().First(&meal, id).Error; err != nil {
@@ -74,7 +74,7 @@ func UpdateMeal(c *gin.Context) {
 // DELETE /meals/:id
 func DeleteMeal(c *gin.Context) {
 	id := c.Param("id")
-	if tx := config.DB().Delete(&entity.Meal{}, id); tx.RowsAffected == 0 {
+	if tx := config.DB().Delete(&food_service.Meal{}, id); tx.RowsAffected == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Meal not found"})
 		return
 	}

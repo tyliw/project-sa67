@@ -11,6 +11,7 @@ type Employee struct {
 	FirstName string
 	LastName string
 	Email string
+	Password string
 	Gender string
 	Date_of_Birth  time.Time
 	Profile   string `gorm:"type:longtext"`

@@ -17,11 +17,6 @@ import UsersUpdate from './employee/UsersUpdate';
 
 
 const RouterComponent: React.FC = () => {
-  // const [selectedBookingID, setSelectedBookingID] = useState<number | null>(null);
-
-  // const handleBookingSelect = (id: number) => {
-  //   setSelectedBookingID(id);
-  // };
 
   const router = createBrowserRouter([
     {

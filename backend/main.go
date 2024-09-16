@@ -24,6 +24,11 @@ func main() {
 
 	r.Use(CORSMiddleware())
 
+
+	// Auth Route
+	r.POST("/signup", employee.SignUp)
+   	r.POST("/signin", employee.SignIn)
+
 	router := r.Group("")
 	{
 		// Employee Routes

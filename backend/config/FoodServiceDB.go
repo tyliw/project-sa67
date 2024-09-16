@@ -8,27 +8,27 @@ import (
 
 func SetupFoodServiceDatabase() {
 	db.AutoMigrate(
-		&entity.FoodCategory{},
-		&entity.Meal{},
-		&entity.Menu{},
-		&entity.Order{},
+		&food_service.FoodCategory{},
+		&food_service.Meal{},
+		&food_service.Menu{},
+		&food_service.Order{},
 	)
 
      // Add Food Categories
-     foodCategory := entity.FoodCategory{Name: "Food"}
-     drinkCategory := entity.FoodCategory{Name: "Drink"}
+     foodCategory := food_service.FoodCategory{Name: "Food"}
+     drinkCategory := food_service.FoodCategory{Name: "Drink"}
  
-     db.FirstOrCreate(&foodCategory, &entity.FoodCategory{Name: "Food"})
-     db.FirstOrCreate(&drinkCategory, &entity.FoodCategory{Name: "Drink"})
+     db.FirstOrCreate(&foodCategory, &food_service.FoodCategory{Name: "Food"})
+     db.FirstOrCreate(&drinkCategory, &food_service.FoodCategory{Name: "Drink"})
  
      // Add Meals
-     breakfast := entity.Meal{Name: "Breakfast"}
-     lunch := entity.Meal{Name: "Lunch"}
-     dinner := entity.Meal{Name: "Dinner"}
+     breakfast := food_service.Meal{Name: "Breakfast"}
+     lunch := food_service.Meal{Name: "Lunch"}
+     dinner := food_service.Meal{Name: "Dinner"}
  
-     db.FirstOrCreate(&breakfast, &entity.Meal{Name: "Breakfast"})
-     db.FirstOrCreate(&lunch, &entity.Meal{Name: "Lunch"})
-     db.FirstOrCreate(&dinner, &entity.Meal{Name: "Dinner"})
+     db.FirstOrCreate(&breakfast, &food_service.Meal{Name: "Breakfast"})
+     db.FirstOrCreate(&lunch, &food_service.Meal{Name: "Lunch"})
+     db.FirstOrCreate(&dinner, &food_service.Meal{Name: "Dinner"})
  
      // Add Menus for Food
      foodItems := []struct {
@@ -79,7 +79,7 @@ func SetupFoodServiceDatabase() {
      }
      
      for _, item := range foodItems {
-         menu := entity.Menu{
+         menu := food_service.Menu{
              MenuList:       item.name,
              Price:          item.price,
              Description:    item.description,
@@ -91,8 +91,8 @@ func SetupFoodServiceDatabase() {
      }
 
     // Seed Orders
-	order1 := entity.Order{OrderDate: time.Now(), Amount: 2, Price: 25.00, MenuID: 1, BookingID: 1}
-	order2 := entity.Order{OrderDate: time.Now(), Amount: 1, Price: 10.00, MenuID: 2, BookingID: 2}
+	order1 := food_service.Order{OrderDate: time.Now(), Amount: 2, Price: 25.00, MenuID: 1, BookingID: 1}
+	order2 := food_service.Order{OrderDate: time.Now(), Amount: 1, Price: 10.00, MenuID: 2, BookingID: 2}
 
 	db.Create(&order1)
 	db.Create(&order2)

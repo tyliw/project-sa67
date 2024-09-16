@@ -1,21 +1,49 @@
 import { Button, Card, Form, Input, message, Flex, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
+import { SignIn } from "../services/https";
 import { SignInInterface } from "../interface/SignIn";
 import logo from "../../assets/logo.png";
+import { GetEmployeeById } from "../../employee/services/https";
 
-function Login() {
+function SignInPages() {
   const navigate = useNavigate();
 
   const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = async (values: SignInInterface) => {
-    // let res = await SignIn(values);
-    navigate('/login/dashboard')
-  };
-
+    try {
+      const res = await SignIn(values);
+      
+      if (res && res.status === 200 && res.data) {
+        console.log("SignIn values: ", res);
+  
+        messageApi.success("Sign-in successful");
+  
+        localStorage.setItem("isLogin", "true");
+        localStorage.setItem("page", "dashboard");
+        localStorage.setItem("token_type", res.data.token_type);
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("id", res.data.id);
+  
+        // ดึงข้อมูลของพนักงาน
+        const emp = await GetEmployeeById(res.data.id);
+        console.log("emp values from SignIn: ", emp);
+  
+        // ส่งข้อมูลไปยังหน้าใหม่
+        navigate("/login/dashboard", { state: { employeeData: emp.ID } });
+      } else {
+        messageApi.error(res?.data?.error || "Unknown error occurred");
+      }
+    } catch (error) {
+      console.error("SignIn error: ", error);
+      messageApi.error("Unknown error occurred");
+    }
+  };  
+   
   return (
     <>
       {contextHolder}
+
       <Flex justify="center" align="center" className="login">
         <Card className="card-login" style={{ width: 500 }}>
           <Row align={"middle"} justify={"center"} style={{ height: "400px" }}>
@@ -24,7 +52,6 @@ function Login() {
                 alt="logo"
                 style={{ width: "80%" }}
                 src={logo}
-
                 className="images-logo"
               />
             </Col>
@@ -68,7 +95,12 @@ function Login() {
                   Or <a onClick={() => navigate("/signup")}>signup now !</a>
                 </Form.Item>
               </Form>
-            </Col>
+            </Col>   
+              <Link to='/login/dashboard'>
+                  <Button>
+                    skip login
+                  </Button>
+            </Link>
           </Row>
         </Card>
       </Flex>
@@ -76,4 +108,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignInPages;

@@ -1,4 +1,4 @@
-package entity
+package food_service
 
 import (
 	"gorm.io/gorm"
@@ -20,5 +20,5 @@ import (
 	FoodCategory    	*FoodCategory  `gorm:"foreignKey: FoodCategoryID"`
 
 	// 1 menu มีได้หลาย order
-	Orders []Order `gorm:"foreignKey:MenuID"`
+	Orders []Order `gorm:"foreignKey:MenuID;constraint:OnDelete:CASCADE;"`
  }
