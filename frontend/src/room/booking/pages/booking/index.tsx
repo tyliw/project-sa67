@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { RoomTypesInterface } from "../../interfaces/IRoomTypes";
 import { RoomInterface } from "../../interfaces/IRoom";
 import moment from "moment";
+import dayjs, { Dayjs } from 'dayjs';
 
 const { Option } = Select;
 
@@ -37,6 +38,12 @@ function CustomerCreate() {
   const [typeroom, setTypeRoom] = useState<number>();
   const [rooms, setRooms] = useState<RoomInterface[]>([]);
   const [selectRoom, setSelectRoom] = useState<number>();
+  const [checkInDate, setCheckInDate] = useState<moment.Moment | null>(null); // State to store CheckIn date
+  const [checkOutDate, setCheckOutDate] = useState<moment.Moment | null>(null); // State to store CheckOut date
+
+  
+  const [dayDifference, setDayDifference] = useState<number | null>(null); // State to store day difference
+  const [totalPrice, setTotalPrice] = useState<number | null>(null); // State to store total price
 
   const onFinish = async (values: BookingInterface) => {
     const formattedValues: BookingInterface = {
@@ -45,9 +52,11 @@ function CustomerCreate() {
       CheckOut: values.CheckOut ? moment(values.CheckOut).format("YYYY-MM-DD") : "",
     };
   
+    // Build the bookingData object and include the calculated totalPrice
     const bookingData: BookingInterface = {
-      CheckIn: values.CheckIn, 
+      CheckIn: values.CheckIn,
       CheckOut: values.CheckOut,
+      TotalPrice: totalPrice, // Add totalPrice from the state
       CustomerID: formattedValues.CustomerID,
       RoomID: formattedValues.RoomID,
     };
@@ -62,7 +71,9 @@ function CustomerCreate() {
         content: "บันทึกข้อมูลสำเร็จ",
       });
       form.resetFields();
+
       setTimeout(() => {
+        window.location.reload(); // Reload the page
         navigate("/login/room");
       }, 2000);
     } else {
@@ -77,17 +88,18 @@ function CustomerCreate() {
     if (selectedRoom) {
       const roomUpdate: RoomInterface = {
         ...selectedRoom,
-        Status: "Occupied", // Ensure this matches the type definition
+        Status: "Occupied", // update status room "Vacant" ----> "Occupied"
       };
   
       console.log("roomUpdate = ", roomUpdate);
       const roomPatch = await UpdateRoom(roomUpdate);
-      console.log("๊Update Successful: ", roomPatch);
+      console.log("Update Successful: ", roomPatch);
     } else {
       console.error("Selected room not found");
     }
   };
   
+
   const getTypeRooms = async () => {
     const res = await GetTypeRooms();
     if (res) {
@@ -118,6 +130,37 @@ function CustomerCreate() {
     getRooms();
     getCustomers();
   }, []);
+
+  // Calculate the difference between CheckIn and CheckOut dates
+  const calculateDayDifference = (checkIn: moment.Moment | null, checkOut: moment.Moment | null) => {
+    if (checkIn && checkOut) {
+      const diff = checkOut.diff(checkIn, "days");
+      setDayDifference(diff);
+    } else {
+      setDayDifference(null);
+    }
+  };
+
+  // Calculate the total price based on the selected room's price per night and day difference
+  const calculateTotalPrice = (selectedRoomID: number | undefined, dayDiff: number | null) => {
+    const selectedRoom = rooms.find((room) => room.ID === selectedRoomID);
+    if (selectedRoom && selectedRoom.RoomTypes && dayDiff !== null) {
+      // Access PricePerNight from RoomTypes instead of Room
+      const pricePerNight = Number(selectedRoom.RoomTypes.PricePerNight);
+      const total = pricePerNight * dayDiff;
+      setTotalPrice(total);
+    } else {
+      setTotalPrice(null);
+    }
+  };
+
+  useEffect(() => {
+    calculateDayDifference(checkInDate, checkOutDate);
+  }, [checkInDate, checkOutDate]);
+
+  useEffect(() => {
+    calculateTotalPrice(selectRoom, dayDifference);
+  }, [selectRoom, dayDifference]);
 
   return (
     <div>
@@ -153,19 +196,29 @@ function CustomerCreate() {
             </Col>
 
             <Col xs={24} sm={24} md={24} lg={12}>
-              <Form.Item
-                label="วัน/เดือน/ปี ที่เข้าที่พัก"
-                name="CheckIn"
-              >
-                <DatePicker style={{ width: "100%" }} />
+              <Form.Item label="วัน/เดือน/ปี ที่เข้าที่พัก" name="CheckIn">
+                <DatePicker
+                  style={{ width: "100%" }}
+                  disabledDate={(current) => {
+                    return current && current < moment().startOf("day");
+                  }}
+                  onChange={(date) => setCheckInDate(date)} // Set check-in date when selected
+                />
               </Form.Item>
             </Col>
 
             <Col xs={24} sm={24} md={24} lg={12}>
-              <Form.Item 
-                label="วัน/เดือน/ปี ที่ออก"
-                name="CheckOut">
-                <DatePicker style={{ width: "100%" }} />
+              <Form.Item label="วัน/เดือน/ปี ที่ออก" name="CheckOut">
+                <DatePicker
+                  style={{ width: "100%" }}
+                  disabled={!checkInDate} // Disable CheckOut field until CheckIn is selected
+                  disabledDate={(current) => {
+                    return (
+                      current && current <= (checkInDate ? checkInDate : moment().startOf("day"))
+                    );
+                  }}
+                  onChange={(date) => setCheckOutDate(date)} // Set check-out date when selected
+                />
               </Form.Item>
             </Col>
 
@@ -175,32 +228,10 @@ function CustomerCreate() {
                 label="ประเภทห้อง"
                 rules={[{ required: true, message: "กรุณาเลือกประเภทห้อง !" }]}
               >
-                <Select
-                  allowClear
-                  onChange={(value) => setTypeRoom(value)}
-                >
+                <Select allowClear onChange={(value) => setTypeRoom(value)}>
                   {typerooms.map((item) => (
                     <Option value={item.ID} key={item.Name}>
                       {item.Name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            
-            <Col xs={24} sm={24} md={24} lg={12}>
-              <Form.Item
-                name="TypeRoomID"
-                label="ยอดที่ต้องชำระ"
-                rules={[{ required: true, message: "ยอดที่ต้องชำระ !" }]}
-              >
-                <Select
-                  allowClear
-                  onChange={(value) => setTypeRoom(value)}
-                >
-                  {typerooms.map((item) => (
-                    <Option value={item.ID} key={item.PricePerNight}>
-                      {item.PricePerNight}
                     </Option>
                   ))}
                 </Select>
@@ -218,7 +249,10 @@ function CustomerCreate() {
                   onChange={(value) => setSelectRoom(value)}
                 >
                   {rooms
-                    .filter((room) => room.RoomTypes?.ID === typeroom && room.Status == "Guest")/*จะแสดงค่าเฉพาะ status = Guest เท่านั้น*/
+                    .filter(
+                      (room) =>
+                        room.RoomTypes?.ID === typeroom && room.Status === "Guest"
+                    )
                     .map((item) => (
                       <Option value={item.ID} key={item.Address}>
                         {item.Address} {item.RoomTypes?.Description}
@@ -227,7 +261,26 @@ function CustomerCreate() {
                 </Select>
               </Form.Item>
             </Col>
+
           </Row>
+
+          {/* Display the difference in days */}
+          {dayDifference !== null && (
+            <Row gutter={[16, 16]}>
+              <Col>
+                <p>จำนวนวันที่เข้าพัก: {dayDifference} วัน</p>
+              </Col>
+            </Row>
+          )}
+
+          {/* Display the total price */}
+          {totalPrice !== null && (
+            <Row gutter={[16, 16]}>
+              <Col>
+                <p>ราคาที่ต้องชำระ: {totalPrice} บาท</p>
+              </Col>
+            </Row>
+          )}
 
           <Row justify="end">
             <Col>

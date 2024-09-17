@@ -111,7 +111,7 @@ const Receipt = () => {
 
       <div className="receipt-total">
         {payment && (
-          <h3>Total Payment: ${payment.TotalAmount.toFixed(2)}</h3>
+          <h3>Total Payment: ${payment.TotalAmount}</h3>
         )}
       </div>
 

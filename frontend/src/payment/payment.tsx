@@ -158,30 +158,31 @@ function Payment() {
     });
   };
 
-  const handleConfirm = async (booking_id: number, room_id: number) => {
-    const selectedBooking = booking.find((b) => b.ID === booking_id);
+  const handleConfirm = async (booking: BookingInterface) => {
+    // const selectedBooking = booking.find((b) => b.ID === booking_id);
 
-    if (!selectedBooking) {
-      console.error("Selected booking not found");
-      return;
-    }
+    // if (!selectedBooking) {
+    //   console.error("Selected booking not found");
+    //   return;
+    // }
 
-    const roomID = selectedBooking.Room?.ID;
-    let roomPrice: number = 0; // Initialize as a number
+    // const roomID = selectedBooking.Room?.ID;
+    // let roomPrice: number = 0; // Initialize as a number
 
-    if (roomID) {
-      // Find room details from the room state
-      const roomDetails = room.find((r) => r.ID === roomID);
+    // if (roomID) {
+    //   // Find room details from the room state
+    //   const roomDetails = room.find((r) => r.ID === roomID);
 
-      // Ensure roomPrice is a number
-      roomPrice = roomDetails?.RoomTypes?.PricePerNight
-        ? Number(roomDetails.RoomTypes.PricePerNight)
-        : 0;
-    }
+    //   // Ensure roomPrice is a number
+    //   roomPrice = roomDetails?.RoomTypes?.PricePerNight
+    //     ? Number(roomDetails.RoomTypes.PricePerNight)
+    //     : 0;
+    // }
+    const roomPrice = booking.TotalPrice as number
 
     console.log("Room Price: ", roomPrice);
 
-    const relatedOrders = order.filter((o) => o.BookingID === booking_id);
+    const relatedOrders = order.filter((o) => o.BookingID === booking.ID);
     const ordersTotalPrice = relatedOrders.reduce((total, currentOrder) => {
       // Ensure Price is a number
       const orderPrice = Number(currentOrder.Price) || 0;
@@ -192,13 +193,13 @@ function Payment() {
 
     const totalAmount = roomPrice + ordersTotalPrice;
 
-    console.log("Total Amount: ", totalAmount);
+    console.log("Total Price: ", totalAmount);
 
     const paymentData: PaymentInterface = {
       PaymentDate: new Date(),
       TotalAmount: totalAmount,
       PaymentMethod: "credit",
-      BookingID: booking_id,
+      BookingID: booking.ID as number,
     };
 
     const res = await CreatePayments(paymentData);
@@ -206,7 +207,7 @@ function Payment() {
 
     if (res) {
       const roomUpdate: RoomInterface = {
-        ID: room_id,
+        ID: booking.RoomID as number,
         Status: "Vacant", // Update status to Invalid
       };
 
@@ -223,8 +224,8 @@ function Payment() {
           navigate("/login/receipt", {
             state: {
               paymentID: res.data.ID,
-              bookingID: booking_id,
-              roomID: roomID,
+              bookingID: booking.ID,
+              roomID: booking.RoomID,
             },
           }),
         500
@@ -255,7 +256,7 @@ function Payment() {
                 <th>CheckOut</th>
                 <th>Customer</th>
                 <th>Room</th>
-                <th>Room Price</th>
+                <th>Total Price</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -269,19 +270,19 @@ function Payment() {
                   return isNotCheckedOut;
                 })
                 .map((b) => {
-                  const matchedRoom = room.find((r) => r.ID === b.Room?.ID);
+                  // const matchedRoom = room.find((r) => r.ID === b.Room?.ID);
                   return (
                     <tr key={b.ID}>
                       <td>{b.ID}</td>
                       <td>{b.CheckIn}</td>
                       <td>{b.CheckOut}</td>
                       <td>{b.Customer?.Name}</td>
-                      <td>{matchedRoom?.Address}</td>
-                      <td>{matchedRoom?.RoomTypes?.PricePerNight}</td>
+                      <td>{b.Room?.Address}</td>
+                      <td>{b.TotalPrice}</td>
                       <td>
                         <button
                           onClick={() =>
-                            handleConfirm(b.ID as number, b.RoomID as number)
+                            handleConfirm(b)
                           }
                         >
                           Confirm

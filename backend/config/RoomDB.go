@@ -11,7 +11,6 @@ func SetupRoomDatabase() {
 		&entity.Booking{},
 		&entity.Customer{},
 		&entity.Room{},
-
 		&entity.RoomTypes{},
 	)
 
