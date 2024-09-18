@@ -11,13 +11,6 @@
     border-radius: 0;
 }
 
-:where(.css-dev-only-do-not-override-1gwfwyx).ant-card .ant-card-body {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 0px;
-    /* border-radius: 0 0 8px 8px; */
-}
 .create-card-header {
     padding: 20px;
     font-size: 26px;

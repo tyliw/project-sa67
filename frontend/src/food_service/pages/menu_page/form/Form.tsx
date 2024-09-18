@@ -1,43 +1,63 @@
 import React from 'react';
-// import { MenuInterface } from '../../../interfaces/IMenu';
 import { ItemInterface } from '../listMenu/FoodList';
 import './index.css';
 
 interface FormProps {
-  onSubmit: () => void;
+  onOrder: () => void;
   selectedItems: ItemInterface[];
   onClearSelection: () => void;
-  bookingID: number | null;  // Accept bookingID as a prop
+  bookingID: number | null;
 }
 
-const Form: React.FC<FormProps> = ({ onSubmit, selectedItems, onClearSelection }) => {
-  const Total = selectedItems.reduce((acc, item) => acc + (item.amount * item.Price), 0).toFixed(2);
+const Form: React.FC<FormProps> = ({ onOrder, selectedItems, onClearSelection }) => {
+  const Total = selectedItems
+    .reduce((acc, item) => acc + item.amount * item.Price, 0)
+    .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleOrder = (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(); // No need to pass roomNumber and customerName
+    onOrder();
   };
 
   const handleClear = () => {
-    onClearSelection(); // Clear selected items
+    onClearSelection();
   };
+
+  console.log("selectedItems for form: ", selectedItems);
 
   return (
     <div className='form-page'>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleOrder}>
         <div className='selected-header'>Selected Menu</div>
 
         <div className="cart-items">
           {selectedItems.length === 0 ? (
             <p>No items selected.</p>
           ) : (
-            <ul>
+            <table className='selectedItem'>
+              <thead>
+                <tr>
+                  <th> No. </th>
+                  <th> Item </th>
+                  {/* <td> Meal. </td> */}
+                  <th> Qty. </th>
+                  <th> Price </th>
+                  <th> Amount </th>
+                </tr>
+              </thead>
               {selectedItems.map((item, index) => (
-                <li key={index}>
-                {item.MenuList} - {item.amount} x {item.Price.toFixed(2)} ฿ = {(item.amount * item.Price).toFixed(2)} ฿
-              </li>              
+                <tbody key={item.ID}>
+                  <tr>
+                    <td>{index+1}</td>
+                    <td>{item.MenuList}</td>
+                    {/* <td>{item.Meal?.Name}</td> */}
+                    <td>{item.amount}</td>
+                    <td>{item.Price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td>{(item.amount * item.Price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</td>
+                  </tr>
+                </tbody>
               ))}
-            </ul>
+            </table>
           )}
         </div>
 
@@ -45,19 +65,14 @@ const Form: React.FC<FormProps> = ({ onSubmit, selectedItems, onClearSelection }
           {selectedItems.length > 0 && (
             <div className="total-amount">
               <h2>Total: {Total} ฿</h2>
-              <button type="submit" className='submit-button'>SUBMIT</button>
+              <button type="submit" className='submit-button'>ORDER</button>
             </div>
           )}
           <button type="button" className='clear-button' onClick={handleClear}>CLEAR</button>
-
-          {/* {selectedItems.length > 0 && (
-          )} */}
         </div>
-
       </form>
     </div>
   );
 }
 
 export default Form;
-

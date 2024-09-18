@@ -251,7 +251,7 @@ function CustomerCreate() {
                   {rooms
                     .filter(
                       (room) =>
-                        room.RoomTypes?.ID === typeroom && room.Status === "Guest"
+                        room.RoomTypes?.ID === typeroom && room.Status === "Vacant"
                     )
                     .map((item) => (
                       <Option value={item.ID} key={item.Address}>

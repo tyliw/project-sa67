@@ -1,3 +1,5 @@
+import { MealInterface } from "./IMeal";
+
 export interface MenuInterface {
   ID: number;
   MenuList: string;
@@ -5,5 +7,6 @@ export interface MenuInterface {
   Description: string;
   ImageMenu?:   string 
   MealID: number;
+  Meal?: MealInterface
   FoodCategoryID?: number;
 }

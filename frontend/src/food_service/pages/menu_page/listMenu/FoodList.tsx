@@ -7,6 +7,7 @@ import { OrderInterface } from '../../../interfaces/IOrder';
 import FoodItem from './FoodItem';
 import Form from '../form/Form';
 import './index.css';
+import { MealInterface } from '../../../interfaces/IMeal';
 // import Item from 'antd/es/list/Item';
 
 // type Category = 'breakfast' | 'lunch' | 'dinner';
@@ -18,6 +19,7 @@ export interface ItemInterface {
   Description: string; 
   ImageMenu: string;
   MealID: number;
+  Meal?: MealInterface
   FoodCategoryID: number;
   amount: number;
 }
@@ -81,7 +83,7 @@ function FoodList({ selectedCategory, bookingID }: { selectedCategory: string | 
     setSelectedItems([]);
   };
 
-  const handleFormSubmit = async () => {
+  const handleFormOrder = async () => {
     if (!bookingID) {
       console.error('No booking ID available');
       messageApi.open({
@@ -185,7 +187,7 @@ function FoodList({ selectedCategory, bookingID }: { selectedCategory: string | 
         </div>
       </div>
       <Form 
-        onSubmit={handleFormSubmit} 
+        onOrder={handleFormOrder} 
         selectedItems={selectedItems}
         onClearSelection={handleClearSelection} // ส่งฟังก์ชันเคลียร์ข้อมูลไปยัง Form
         bookingID={bookingID} // Pass bookingID to Form
