@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Space,
   Button,
@@ -9,24 +9,17 @@ import {
   Input,
   Card,
   message,
-  
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { CustomersInterface } from "../booking/interfaces/ICustomer";
 import { CreateCustomer} from "../booking/services/https";
 import { useNavigate } from "react-router-dom";
-
-
-
 function CustomerCreate() {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();  // Initialize the form instance
-
-
-
   const onFinish = async (values: CustomersInterface) => {
-    let res = await CreateCustomer(values);
+    const res = await CreateCustomer(values);
     
     console.log(res);
     if (res) {
@@ -38,6 +31,7 @@ function CustomerCreate() {
       setTimeout(function () {
         
       }, 2000);
+      navigate("/login/room");
     } else {
       messageApi.open({
         type: "error",
@@ -45,21 +39,8 @@ function CustomerCreate() {
       });
     }
   };
-
-  
-
-
-  
-
-
-
- 
-
   useEffect(() => {
-    
-   
   }, []);
-
   return (
     <div>
       {contextHolder}
@@ -130,18 +111,18 @@ function CustomerCreate() {
                 rules={[
                   {
                     required: true,
-                    message: "กรุณากรอกเบอร์โทรศัพท์ !",
+                    message: "กรุณากรอกเบอร์โทรศัพท์!",
+                  },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลักเท่านั้น!",
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={10} placeholder="กรอกเบอร์โทร (10 หลัก)" />
               </Form.Item>
             </Col>
-
-            
-
           </Row>
-
           <Row justify="end">
             <Col style={{ marginTop: "40px" }}>
               <Form.Item>

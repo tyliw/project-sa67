@@ -3,37 +3,38 @@ import { useNavigate, useLocation } from "react-router-dom"; // <-- Add this
 import { Col, Divider } from "antd";
 import { MdBedroomParent } from "react-icons/md";
 import { BookingInterface } from "../../../room/booking/interfaces/IBooking";
-import { GetBookings } from "../../../room/booking/services/https";
+import { GetBookings, GetTypeRooms } from "../../../room/booking/services/https";
 import "./index.css";
 import { GetPayments } from "../../../payment/services/https/PaymentAPI";
 import { PaymentInterface } from "../../../payment/interface/IPayment";
-
-// interface BookingProps {
-//   onBookingSelect: (id: number) => void;
-// }
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
+import { RoomTypesInterface } from "../../../room/booking/interfaces/IRoomTypes";
 
 const BookingList: React.FC = () => {
+  const [roomType, setRoomType] = useState<RoomTypesInterface[]>([]);
   const [booking, setBooking] = useState<BookingInterface[]>([]);
   const [payment, setPayment] = useState<PaymentInterface[]>([]);
   const navigate = useNavigate(); // <-- Add this
   const location = useLocation();
 
+  const fetchRoomType = async () => {
+    try {
+      const response = await GetTypeRooms();
+      if (Array.isArray(response)) {
+        console.log("GetTypeRooms response: ", response);
+        setRoomType(response);
+      } else {
+        setRoomType([]);
+      }
+    } catch (error) {
+      console.error("Error fetching room type data:", error);
+    }
+  };
+
   const fetchBooking = async () => {
     try {
       const response = await GetBookings();
       if (Array.isArray(response)) {
-        console.log("GetBookings for Food: ", response);
+        console.log("GetBookings response: ", response);
         setBooking(response);
       } else {
         setBooking([]);
@@ -47,7 +48,7 @@ const BookingList: React.FC = () => {
     try {
       const response = await GetPayments();
       if (Array.isArray(response)) {
-        console.log("GetPayments for Food: ", response);
+        console.log("GetPayments response: ", response);
         setPayment(response);
       } else {
         setPayment([]);
@@ -60,7 +61,14 @@ const BookingList: React.FC = () => {
   useEffect(() => {
     fetchBooking();
     fetchPayment();
+    fetchRoomType();
   }, []);
+
+  // ฟังก์ชันค้นหาชื่อประเภทห้องจาก ID
+  const getRoomTypeName = (roomTypeID: number | undefined) => {
+    const roomTypeItem = roomType.find(rt => rt.ID === roomTypeID);
+    return roomTypeItem ? roomTypeItem.Name : "Unknown Type";
+  };
 
   return (
     <>
@@ -98,17 +106,17 @@ const BookingList: React.FC = () => {
                       <span>{book.Customer?.Name}</span>
                     </div>
                     <div className="name">
-                      <h2>Room Status</h2>
-                      <span>{book.Room?.Status}</span>
+                      <h2>Room Type</h2>
+                      <span>{getRoomTypeName(book.Room?.RoomTypesID)}</span>
                     </div>
                     <div className="seat">
                       <h2>{book.Room?.Address}</h2>
                       <span>number</span>
                     </div>
-                    <div className="time">
+                    {/* <div className="time">
                       <h2>{formatDate(book.CheckIn)}</h2>
                       <span>Check In</span>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="card cardRight">
                     <MdBedroomParent

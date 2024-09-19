@@ -6,6 +6,6 @@ export interface RoomInterface {
   Status?: string;
   Address?: string;
   Bookings?: BookingInterface[];
-  RoomTypesId?: number | null;
+  RoomTypesID?: number;
   RoomTypes?: RoomTypesInterface;
 }

@@ -1,0 +1,50 @@
+.receipt {
+  font-family: 'Arial', sans-serif;
+  max-width: 300px;
+  margin: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.receipt-header {
+  text-align: center;
+}
+
+.receipt-footer {
+  text-align: center;
+}
+
+.receipt-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.receipt-room {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.receipt-order {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.receipt-divider {
+  border-top: 1px dashed #000;
+  padding-top: 5px;
+  margin-top: 10px;
+}
+
+.receipt-divider div {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.receipt-oop {
+  border-top: 1px dashed #000;
+  padding-top: 5px;
+  margin-top: 10px;
+}

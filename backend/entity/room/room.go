@@ -6,7 +6,7 @@ import (
 
 type Room struct {
 	gorm.Model
-	Status  string `gorm:"default:Guest"`
+	Status  string `gorm:"default:Vacant"`
 	Address string
 
 	// 1 creator เป็นเจ้าของได้หลาย Sound

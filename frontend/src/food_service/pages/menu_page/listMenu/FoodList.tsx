@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { message } from 'antd';
 // import { MenuInterface } from '../../../interfaces/IMenu';
 import { GetMenus } from '../../../services/https/MenuAPI';
@@ -30,6 +31,7 @@ function FoodList({ selectedCategory, bookingID }: { selectedCategory: string | 
   const [selectedItems, setSelectedItems] = useState<ItemInterface[]>([]);
   const [menuItems, setMenuItems] = useState<ItemInterface[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate(); // <-- Add this
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -120,6 +122,9 @@ function FoodList({ selectedCategory, bookingID }: { selectedCategory: string | 
           content: 'Order placed successfully!',
         });
         handleClearSelection(); // เคลียร์รายการหลังจากส่งข้อมูลสำเร็จ
+        setTimeout(() => {
+          navigate("/login/payment")
+        }, 500)
       } else {
         // ถ้ามีบางออเดอร์ล้มเหลว แสดงข้อความ error
         messageApi.open({

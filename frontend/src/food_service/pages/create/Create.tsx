@@ -42,20 +42,26 @@ const Create: React.FC = () => {
         imgWindow?.document.write(image.outerHTML);
     };
 
-
     const onFinish = async (values: MenuInterface) => {
         console.log("Data sent to API for create:", values);
-        try {
+    
+        // ตรวจสอบว่ามีไฟล์ใน fileList หรือไม่
+        if (fileList.length > 0 && fileList[0].thumbUrl) {
             values.ImageMenu = fileList[0].thumbUrl;
+        } else {
+            values.ImageMenu = ""; // กำหนดเป็นค่าสตริงเปล่าหากไม่มีไฟล์
+        }
+    
+        try {
             const res = await CreateMenu(values);
             console.log("API Created:", res);
             if (res) {
-                // Display success message
+                // แสดงข้อความสำเร็จ
                 messageApi.open({
                     type: "success",
                     content: "Data saved successfully",
                 });
-                // Navigate to the desired page after a short delay to allow the message to be visible
+                // นำทางไปยังหน้าที่ต้องการหลังจากความล่าช้าสั้น ๆ เพื่อให้ข้อความเห็น
                 setTimeout(() => navigate('/login/manage-data'), 500);
             } else {
                 messageApi.open({
@@ -157,7 +163,7 @@ const Create: React.FC = () => {
                             <Form.Item
                                 label="Menu List"
                                 name="MenuList"
-                                rules={[{ required: true, message: "กรุณากรอกชื่อ !" }]}
+                                rules={[{ required: true, message: "Please enter a menu name !" }]}
                             >
                                 <Input placeholder="Enter menu name" />
                             </Form.Item>
@@ -167,8 +173,8 @@ const Create: React.FC = () => {
                                 label="Price"
                                 name="Price"
                                 rules={[
-                                    { required: true, message: "กรุณากรอกราคา !" },
-                                    { type: 'number', message: 'กรุณากรอกหมายเลขที่ถูกต้อง!', transform: value => Number(value) },
+                                    { required: true, message: "Please enter a price !" },
+                                    { type: 'number', message: 'Please enter a valid number!', transform: value => Number(value) },
                                 ]}
                             >
                                 <InputNumber 
@@ -182,7 +188,7 @@ const Create: React.FC = () => {
                             <Form.Item
                                 label="Description"
                                 name="Description"
-                                rules={[{ required: true, message: "กรุณากรอกคำอธิบาย !" }]}
+                                rules={[{ required: true, message: "Please enter a description !" }]}
                             >
                                 <Input placeholder="Enter description" />
                             </Form.Item>
@@ -191,7 +197,7 @@ const Create: React.FC = () => {
                             <Form.Item
                                 name="MealID"
                                 label="Meal"
-                                rules={[{ required: true, message: "กรุณาระบุมื้ออาหาร !" }]}
+                                rules={[{ required: true, message: "Please specify the meal !" }]}
                             >
                                 <Select placeholder="Select a meal" allowClear>
                                     {meals.map((item) => (
@@ -206,7 +212,7 @@ const Create: React.FC = () => {
                             <Form.Item
                                 name="FoodCategoryID"
                                 label="Food Category"
-                                rules={[{ required: true, message: "กรุณาระบุประเภท !" }]}
+                                rules={[{ required: true, message: "Please specify the Category !" }]}
                             >
                                 <Select placeholder="Select a category" allowClear>
                                     {foodCategories.map((item) => (

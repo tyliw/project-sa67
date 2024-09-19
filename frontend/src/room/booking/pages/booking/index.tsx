@@ -25,10 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { RoomTypesInterface } from "../../interfaces/IRoomTypes";
 import { RoomInterface } from "../../interfaces/IRoom";
 import moment from "moment";
-import dayjs, { Dayjs } from 'dayjs';
-
 const { Option } = Select;
-
 function CustomerCreate() {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -72,15 +69,20 @@ function CustomerCreate() {
       });
       form.resetFields();
 
-      setTimeout(() => {
-        window.location.reload(); // Reload the page
-        navigate("/login/room");
-      }, 2000);
+      if (res.data.ID !== undefined) {
+        setTimeout(() => {
+          //window.location.reload(); // Reload the page
+          navigate(`/login/food-service/structure/${res.data.ID}`, {
+            state: { bookingID: res.data.ID },
+          });
+        }, 500);
+      }
     } else {
       messageApi.open({
         type: "error",
         content: "เกิดข้อผิดพลาด !",
       });
+      
     }
   
     // Fetch the selected room and update its status
@@ -177,23 +179,36 @@ function CustomerCreate() {
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={24} lg={12}>
-              <Form.Item
-                name="CustomerID"
-                label="ชื่อลูกค้า"
-                rules={[{ required: true, message: "กรุณาเลือกชื่อลูกค้า !" }]}
-              >
-                <Select
-                  allowClear
-                  onChange={(value) => form.setFieldValue("CustomerID", value)}
+                <Form.Item
+                  name="CustomerID"
+                  label="ชื่อลูกค้า"
+                  rules={[{ required: true, message: "กรุณาเลือกชื่อลูกค้า!" }]}
                 >
-                  {customers.map((item) => (
-                    <Option value={item.ID} key={item.Name}>
-                      {item.Name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
+                  <Select
+                    showSearch // เพื่อเปิดการค้นหาชื่อ
+                    allowClear
+                    placeholder="ค้นหาหรือเลือกชื่อลูกค้า"
+                    optionFilterProp="children"
+                    onChange={(value) => form.setFieldValue("CustomerID", value)}
+                    filterOption={(input, option) =>
+                      (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
+                    }
+                  >
+                    {customers.map((item) => (
+                      <Option value={item.ID} key={item.ID}>
+                        {item.Name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                {/* เพิ่มปุ่มลิงก์ไปยังหน้าเพิ่มชื่อ */}
+                <Form.Item>
+                  <Button type="link" href="/login/customer">
+                    เพิ่มชื่อลูกค้าใหม่
+                  </Button>
+                </Form.Item>
             </Col>
+
 
             <Col xs={24} sm={24} md={24} lg={12}>
               <Form.Item label="วัน/เดือน/ปี ที่เข้าที่พัก" name="CheckIn">

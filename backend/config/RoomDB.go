@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"project-sa67/entity/room"
+	entity "project-sa67/entity/room"
 	"time"
 )
 
@@ -56,7 +56,7 @@ func SetupRoomDatabase() {
 	//db.FirstOrCreate(&roomTypeRoomRank2)
 
 	// Seed Rooms
-	room101 := entity.Room{Address: "101", RoomTypesID: &singleRoom.ID}
+	room101 := entity.Room{Address: "101", RoomTypesID: &singleRoom.ID, Status: "Occupied"}
 	room102 := entity.Room{Address: "102", RoomTypesID: &singleRoom.ID}
 	room103 := entity.Room{Address: "103", RoomTypesID: &singleRoom.ID}
 	room104 := entity.Room{Address: "104", RoomTypesID: &singleRoom.ID}
@@ -67,7 +67,7 @@ func SetupRoomDatabase() {
 	room109 := entity.Room{Address: "109", RoomTypesID: &singleRoom.ID}
 	room110 := entity.Room{Address: "110", RoomTypesID: &singleRoom.ID}
 
-	room201 := entity.Room{Address: "201", RoomTypesID: &doubleRoom.ID}
+	room201 := entity.Room{Address: "201", RoomTypesID: &doubleRoom.ID, Status: "Occupied"}
 	room202 := entity.Room{Address: "202", RoomTypesID: &doubleRoom.ID}
 	room203 := entity.Room{Address: "203", RoomTypesID: &doubleRoom.ID}
 	room204 := entity.Room{Address: "204", RoomTypesID: &doubleRoom.ID}
@@ -130,8 +130,8 @@ func SetupRoomDatabase() {
 	db.FirstOrCreate(&customer2)
 
 	// Seed Bookings
-	booking1 := entity.Booking{CheckIn: time.Now(), CustomerID: &customer1.ID, RoomID: &room101.ID}
-	booking2 := entity.Booking{CheckIn: time.Now(), CustomerID: &customer2.ID, RoomID: &room201.ID}
+	booking1 := entity.Booking{CheckIn: time.Now(), CustomerID: &customer1.ID, RoomID: &room101.ID, TotalPrice: 500}
+	booking2 := entity.Booking{CheckIn: time.Now(), CustomerID: &customer2.ID, RoomID: &room201.ID, TotalPrice: 1500}
 
 	db.Create(&booking1)
 	db.Create(&booking2)

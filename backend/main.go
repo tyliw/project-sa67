@@ -3,13 +3,15 @@ package main
 import (
 	"net/http"
 	"project-sa67/config"
+
 	// "project-sa67/controller"
-	"project-sa67/controller/employee"
-	"project-sa67/controller/room"
-	"project-sa67/controller/meeting_room"
-	"project-sa67/controller/food_service"
-	"project-sa67/controller/payment"
 	"project-sa67/controller/dashboard"
+	"project-sa67/controller/employee"
+	"project-sa67/controller/food_service"
+	"project-sa67/controller/meeting_room"
+	"project-sa67/controller/payment"
+	"project-sa67/controller/room"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -120,6 +122,7 @@ func main() {
 
 		// Dashboard
 		router.GET("/orders_per_day", dashboard.ListOrdersPerDay)
+		router.GET("/get_most_purchased_menu", dashboard.GetMostPurchasedMenu)
 	}
 
 	r.GET("/", func(c *gin.Context) {
