@@ -7,14 +7,15 @@ import Structure from './food_service/pages/structure/Structure';
 import Edit from './food_service/pages/edit/Edit';
 import Create from './food_service/pages/create/Create';
 import Home from './employee/Home';
-import Receipt from './payment/receipt/receipt';
 import SignUpPages from './authentication/register/SignUpPages';
 import Booking from './room/booking/pages/booking';
 import CustomerCreate from './room/customer';
 import UserCreate from './employee/UsersCreate';
 import UsersUpdate from './employee/UsersUpdate';
 import Payment from './payment/payment';
-import PaymentHistory from './payment2/pages/payment_history/PaymentHistory';
+import PaymentMethod from './payment/pages/paymentmethod/paymentmethod';
+import PaymentHistory from './payment/pages/payment_history/PaymentHistory';
+import Receipt from './payment/pages/receipt/receipt';
 
 
 const RouterComponent: React.FC = () => {
@@ -66,6 +67,7 @@ const RouterComponent: React.FC = () => {
         // Payment
         { path: 'payment', element: <Payment /> },
         { path: 'receipt', element: <Receipt /> },
+        { path: 'paymentmethod', element: <PaymentMethod /> },
         { path: 'payment_history', element: <PaymentHistory /> },
         { path: 'logout', element: <h2>Logout</h2> },
         { path: '*', element: <h2>404 - Not Found</h2> }, // เส้นทาง 404 สำหรับเส้นทางที่ไม่พบ

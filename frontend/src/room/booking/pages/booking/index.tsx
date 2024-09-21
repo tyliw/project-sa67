@@ -21,7 +21,7 @@ import {
   GetCustomers,
   UpdateRoom,
 } from "../../services/https";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RoomTypesInterface } from "../../interfaces/IRoomTypes";
 import { RoomInterface } from "../../interfaces/IRoom";
 import moment from "moment";
@@ -301,7 +301,9 @@ function CustomerCreate() {
             <Col>
               <Form.Item>
                 <Space>
-                  <Button htmlType="button">ยกเลิก</Button>
+                  <Link to="/login/dashboard">
+                    <Button htmlType="button">ยกเลิก</Button>
+                  </Link>
                   <Button
                     type="primary"
                     htmlType="submit"

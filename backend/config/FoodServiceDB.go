@@ -91,8 +91,8 @@ func SetupFoodServiceDatabase() {
      }
 
     // Seed Orders
-	order1 := food_service.Order{OrderDate: time.Now(), Amount: 2, Price: 25.00, MenuID: 1, BookingID: 1}
-	order2 := food_service.Order{OrderDate: time.Now(), Amount: 1, Price: 10.00, MenuID: 2, BookingID: 2}
+	order1 := food_service.Order{OrderDate: time.Now(), Amount: 1, Price: 240, MenuID: 1, BookingID: 1}
+	order2 := food_service.Order{OrderDate: time.Now(), Amount: 1, Price: 250, MenuID: 2, BookingID: 2}
 
 	db.Create(&order1)
 	db.Create(&order2)

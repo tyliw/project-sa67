@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdOutlinePayment } from "react-icons/md";
+// import { MdOutlinePayment } from "react-icons/md";
 import { PaymentInterface } from "./interface/IPayment";
 import {
   DeleteOrderByID,
@@ -8,8 +8,8 @@ import {
 } from "../food_service/services/https/OrderAPI";
 import { OrderInterface } from "../food_service/interfaces/IOrder";
 import "./App.css";
-import { CreatePayments, GetPayments } from "./services/https/PaymentAPI";
-import { message, Modal } from "antd";
+// import { CreatePayments, GetPayments } from "./services/https/PaymentAPI";
+import { Col, message, Modal } from "antd";
 import { BookingInterface } from "../room/booking/interfaces/IBooking";
 import {
   DeleteBookingByID,
@@ -18,13 +18,14 @@ import {
   UpdateRoom,
 } from "../room/booking/services/https";
 import { RoomInterface } from "../room/booking/interfaces/IRoom";
+import { GetPayments } from "./services/https/PaymentAPI";
 
 function Payment() {
   const [booking, setBooking] = useState<BookingInterface[]>([]);
   const [room, setRoom] = useState<RoomInterface[]>([]);
   const [order, setOrder] = useState<OrderInterface[]>([]);
   const [payment, setPayment] = useState<PaymentInterface[]>([]);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [, contextHolder] = message.useMessage();
   const navigate = useNavigate();
 
   const fetchBooking = async () => {
@@ -96,6 +97,7 @@ function Payment() {
   console.log("booking for payment: ", booking);
   console.log("order for payment: ", order);
   console.log("room for payment: ", room);
+  console.log("payment for payment: ", payment);
 
   const handleDeleteBooking = async (
     booking: BookingInterface,
@@ -136,6 +138,10 @@ function Payment() {
     }
   };
 
+  const confirmBooking = (booking: BookingInterface, totalAmount: number) => {
+    navigate("/login/paymentmethod", { state: { bookingData: booking, totalAmount: totalAmount } })
+  };
+
   const confirmCancalBooking = (booking: BookingInterface, RoomID: number) => {
     Modal.confirm({
       title: "Are you sure you want to delete this item?",
@@ -158,209 +164,210 @@ function Payment() {
     });
   };
 
-  const handleConfirm = async (booking: BookingInterface) => {
-    // const selectedBooking = booking.find((b) => b.ID === booking_id);
 
-    // if (!selectedBooking) {
-    //   console.error("Selected booking not found");
-    //   return;
-    // }
-
-    // const roomID = selectedBooking.Room?.ID;
-    // let roomPrice: number = 0; // Initialize as a number
-
-    // if (roomID) {
-    //   // Find room details from the room state
-    //   const roomDetails = room.find((r) => r.ID === roomID);
-
-    //   // Ensure roomPrice is a number
-    //   roomPrice = roomDetails?.RoomTypes?.PricePerNight
-    //     ? Number(roomDetails.RoomTypes.PricePerNight)
-    //     : 0;
-    // }
-    const roomPrice = booking.TotalPrice as number
-
-    console.log("Room Price: ", roomPrice);
+  // คำนวณราคารวมของการจองแต่ละครั้ง
+  const calculateTotalAmount = (booking: BookingInterface) => {
+    const roomPrice = booking.TotalPrice as number;
 
     const relatedOrders = order.filter((o) => o.BookingID === booking.ID);
     const ordersTotalPrice = relatedOrders.reduce((total, currentOrder) => {
-      // Ensure Price is a number
+      // คำนวณราคารวมจากแต่ละออเดอร์
       const orderPrice = Number(currentOrder.Price) || 0;
       return total + orderPrice;
     }, 0);
 
-    console.log("Orders Total Price: ", ordersTotalPrice);
+    return roomPrice + ordersTotalPrice; // ราคารวมค่าห้องและค่าอาหาร
+  };
 
-    const totalAmount = roomPrice + ordersTotalPrice;
-
-    console.log("Total Price: ", totalAmount);
-
-    const paymentData: PaymentInterface = {
-      PaymentDate: new Date(),
-      TotalAmount: totalAmount,
-      PaymentMethod: "credit",
-      BookingID: booking.ID as number,
-    };
-
-    const res = await CreatePayments(paymentData);
-    console.log("CreatePayments Response: ", res);
-
-    if (res) {
-      const roomUpdate: RoomInterface = {
-        ID: booking.RoomID as number,
-        Status: "Vacant", // Update status to Invalid
-      };
-
-      const roomPach = await UpdateRoom(roomUpdate);
-      console.log("UpdateRoom form payment:", roomPach);
-      messageApi.open({
-        type: "success",
-        content: "Data saved successfully",
-      });
-      fetchBooking();
-      fetchOrder();
-      setTimeout(
-        () =>
-          navigate("/login/receipt", {
-            state: {
-              paymentID: res.data.ID,
-              bookingID: booking.ID,
-              roomID: booking.RoomID,
-            },
-          }),
-        500
-      );
-    } else {
-      messageApi.open({
-        type: "error",
-        content: "Error!",
-      });
-    }
+  const calculateStayDuration = (checkInDate: Date, checkOutDate: Date) => {
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    const durationInMilliseconds = checkOut.getTime() - checkIn.getTime();
+    const durationInDays = Math.ceil(
+      durationInMilliseconds / (1000 * 60 * 60 * 24)
+    ); // Convert milliseconds to days
+    return durationInDays;
   };
 
   return (
-    <div className="app-container">
+    <div className="payment-container">
       {contextHolder}
-      <header>
-        <h1>Payment System</h1>
-        <MdOutlinePayment className="icon-style" />
-      </header>
-      <section className="payment-section">
-        <h2>Booking</h2>
-        <div className="booking-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Book ID</th>
-                <th>CheckIn</th>
-                <th>CheckOut</th>
-                <th>Customer</th>
-                <th>Room</th>
-                <th>Total Price</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {booking
-                .filter((b) => {
-                  const isNotCheckedOut = !payment.some(
-                    (pay) => pay.BookingID === b.ID
-                  );
+      <Col>
+        <h1 className="payment-header" style={{ fontSize: "32px" }}>
+          Payment
+        </h1>
+      </Col>
+      <div className="payment-content">
+        {booking
+          .filter((b) => {
+            const isNotCheckedOut = !payment.some(
+              (pay) => pay.BookingID === b.ID
+            );
+            return isNotCheckedOut;
+          })
+          .map((b) => {
+            const totalAmount = calculateTotalAmount(b); // คำนวณราคารวม
+            const stayDuration = calculateStayDuration(
+              b.CheckIn as unknown as Date,
+              b.CheckOut as unknown as Date
+            ); // Calculate the number of nights stayed
 
-                  return isNotCheckedOut;
-                })
-                .map((b) => {
-                  // const matchedRoom = room.find((r) => r.ID === b.Room?.ID);
-                  return (
-                    <tr key={b.ID}>
-                      <td>{b.ID}</td>
-                      <td>{b.CheckIn}</td>
-                      <td>{b.CheckOut}</td>
-                      <td>{b.Customer?.Name}</td>
-                      <td>{b.Room?.Address}</td>
-                      <td>{b.TotalPrice}</td>
-                      <td>
-                        <button
-                          onClick={() =>
-                            handleConfirm(b)
-                          }
+            return (
+              <>
+                <div className="payment-card" key={b.ID}>
+                  <table className="table-booking-list">
+                    <div className="card-header">
+                      <tr>
+                        <td
+                          style={{
+                            width: "500px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexDirection: "column",
+                          }}
                         >
-                          Confirm
-                        </button>
-                        <button
-                          className="btn-delete-booking"
-                          onClick={() =>
-                            confirmCancalBooking(b, b.RoomID as number)
-                          }
-                        >
-                          Cancel
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <h2>Order</h2>
-          <div className="order-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Menu Image</th>
-                  <th>Menu</th>
-                  <th>Amount</th>
-                  <th>Price</th>
-                  <th>Booking ID</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order
-                  .filter((o) => {
-                    // ค้นหาการจองที่เกี่ยวข้องกับคำสั่งซื้อ
-                    const bookingForOrder = booking.find(
-                      (b) => b.ID === o.BookingID
-                    );
+                          <h1 style={{ fontSize: "18px", marginTop:"10px" }}>Booking {b.ID}</h1>
+                          <div className="card-header-room-data">
+                            <h1
+                              style={{
+                                fontSize: "24px",
+                                wordBreak: "break-word", // หักคำถ้ามันยาวเกินไป
+                                overflowWrap: "break-word", // หักคำเมื่อมันเกินพื้นที่
+                                whiteSpace: "normal", // อนุญาตให้ขึ้นบรรทัดใหม่
+                              }}
+                            >
+                              {b.Customer?.Name} / Room {b.Room?.Address}
+                            </h1>
+                            {/* Display the price per night, stay duration, and total room price */}
 
-                    // ตรวจสอบว่าการจองยังไม่ได้เช็คเอาท์
-                    const isNotCheckedOut = !payment.some(
-                      (pay) => pay.BookingID === o.BookingID
-                    );
-
-                    return bookingForOrder && isNotCheckedOut;
-                  })
-                  .map((o) => (
-                    <tr key={o.ID}>
-                      <td>{o.ID}</td>
-                      <td>
-                        <img
-                          className="payment-menu-image"
-                          src={o.Menu?.ImageMenu}
-                          alt=""
-                        />
-                      </td>
-                      <td>{o.Menu?.MenuList}</td>
-                      <td>{o.Amount}</td>
-                      <td>{o.Price.toFixed(2)}</td>
-                      <td>{o.BookingID}</td>
-                      <td>
-                        <button
-                          className="btn-delete-order"
-                          onClick={() => confirmCancalOrder(o.ID as number)}
+                            {/* Total price for booking */}
+                            <h1
+                              style={{
+                                fontSize: "24px",
+                                flexDirection: "column",
+                              }}
+                            >
+                              {stayDuration} nights /{" "}
+                              {(b.TotalPrice ?? 0).toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}{" "}
+                              ฿
+                            </h1>
+                          </div>
+                        </td>
+                        <td
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
                         >
-                          Cancel
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+                          <div className="container-btn-payment">
+                            <button
+                              className="btn-confirm-booking"
+                              onClick={() => confirmBooking(b, totalAmount)}
+                            >
+                              Select
+                            </button>
+                            <button
+                              className="btn-cancel-booking"
+                              onClick={() =>
+                                confirmCancalBooking(b, b.RoomID as number)
+                              }
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </div>
+                  </table>
+
+                  <div className="container-order-list">
+                    <table className="table-order-list">
+                      <thead>
+                        <tr>
+                          <th> No. </th>
+                          <th> Item </th>
+                          <th> Qty. </th>
+                          <th> Price </th>
+                          <th> Amount </th>
+                          <th> Action </th>
+                        </tr>
+                      </thead>
+                      {order.filter((o) => {
+                        const isOrderForCurrentBooking = o.BookingID === b.ID;
+                        const isNotCheckedOut = !payment.some(
+                          (pay) => pay.BookingID === o.BookingID
+                        );
+                        return isOrderForCurrentBooking && isNotCheckedOut;
+                      }).length === 0 ? (
+                        <tbody>
+                          <tr>
+                            <td colSpan={6} style={{ textAlign: "center" }}>
+                              No orders available
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        order
+                          .filter((o) => {
+                            const isOrderForCurrentBooking =
+                              o.BookingID === b.ID;
+                            const isNotCheckedOut = !payment.some(
+                              (pay) => pay.BookingID === o.BookingID
+                            );
+                            return isOrderForCurrentBooking && isNotCheckedOut;
+                          })
+                          .map((o, index) => (
+                            <tbody key={o.ID}>
+                              <tr>
+                                <td>{index + 1}</td>
+                                <td>{o.Menu?.MenuList}</td>
+                                <td>{o.Amount}</td>
+                                <td>{o.Menu?.Price.toFixed(2)}</td>
+                                <td>
+                                  {o.Price.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}{" "}
+                                  ฿
+                                </td>
+                                <td>
+                                  <button
+                                    className="btn-cancel-order"
+                                    onClick={() =>
+                                      confirmCancalOrder(o.ID as number)
+                                    }
+                                  >
+                                    Cancel
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          ))
+                      )}
+                    </table>
+                  </div>
+
+                  {/* เพิ่มราคารวมที่คำนวณไว้ */}
+                  <div className="payment-card-total-amount">
+                    <h1>
+                      Total Amount:{" "}
+                      {totalAmount.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      ฿
+                    </h1>
+                  </div>
+                </div>
+              </>
+            );
+          })}
+      </div>
     </div>
   );
 }

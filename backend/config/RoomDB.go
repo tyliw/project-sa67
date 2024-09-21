@@ -33,13 +33,13 @@ func SetupRoomDatabase() {
 	// db.FirstOrCreate(&RoomTypesTrible)
 
 	// Seed RoomTypes
-	singleRoom := entity.RoomTypes{Name: "Single", PricePerNight: 100, Description: "Single bed room"}
-	doubleRoom := entity.RoomTypes{Name: "Double", PricePerNight: 150, Description: "Double bed room"}
-	suiteRoom := entity.RoomTypes{Name: "Suite", PricePerNight: 250, Description: "Suite room with premium amenities"}
+	singleRoom := entity.RoomTypes{Name: "Single", PricePerNight: 400, Description: "Single bed room"}
+	doubleRoom := entity.RoomTypes{Name: "Double", PricePerNight: 500, Description: "Double bed room"}
+	suiteRoom := entity.RoomTypes{Name: "Suite", PricePerNight: 850, Description: "Suite room with premium amenities"}
 
-	db.FirstOrCreate(&singleRoom, &entity.RoomTypes{Name: "Single", PricePerNight: 100, Description: "Single bed room"})
-	db.FirstOrCreate(&doubleRoom, &entity.RoomTypes{Name: "Double", PricePerNight: 150, Description: "Double bed room"})
-	db.FirstOrCreate(&suiteRoom, &entity.RoomTypes{Name: "Suite", PricePerNight: 250, Description: "Suite room with premium amenities"})
+	db.FirstOrCreate(&singleRoom, &entity.RoomTypes{Name: "Single", PricePerNight: 400, Description: "Single bed room"})
+	db.FirstOrCreate(&doubleRoom, &entity.RoomTypes{Name: "Double", PricePerNight: 500, Description: "Double bed room"})
+	db.FirstOrCreate(&suiteRoom, &entity.RoomTypes{Name: "Suite", PricePerNight: 850, Description: "Suite room with premium amenities"})
 
 	// Seed RoomRanks
 	//standardRank := entity.RoomRank{Name: "Standard", NumberPerRank: 1, Description: "Standard rank room"}

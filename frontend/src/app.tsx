@@ -7,7 +7,7 @@ import { MdFastfood, MdOutlinePayment, MdOutlineBedroomParent, MdMeetingRoom } f
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoReceiptOutline } from "react-icons/io5";
 import logo from "./assets/logo.png";
-import './index.css'
+import './index.css';
 
 const { Sider, Content } = Layout;
 
