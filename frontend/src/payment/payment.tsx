@@ -198,175 +198,191 @@ function Payment() {
         </h1>
       </Col>
       <div className="payment-content">
-        {booking
-          .filter((b) => {
-            const isNotCheckedOut = !payment.some(
-              (pay) => pay.BookingID === b.ID
-            );
-            return isNotCheckedOut;
-          })
-          .map((b) => {
-            const totalAmount = calculateTotalAmount(b); // คำนวณราคารวม
-            const stayDuration = calculateStayDuration(
-              b.CheckIn as unknown as Date,
-              b.CheckOut as unknown as Date
-            ); // Calculate the number of nights stayed
+        {booking.length === 0 ? (
+          <div>No bookings available</div>
+        ) : (
+          booking
+            .filter((b) => {
+              const isNotCheckedOut = !payment.some(
+                (pay) => pay.BookingID === b.ID
+              );
+              return isNotCheckedOut;
+            })
+            .length === 0 ? (
+            <div>No bookings available</div>
+          ) : (
+            booking
+              .filter((b) => {
+                const isNotCheckedOut = !payment.some(
+                  (pay) => pay.BookingID === b.ID
+                );
+                return isNotCheckedOut;
+              })
+              .map((b) => {
+                const totalAmount = calculateTotalAmount(b); // คำนวณราคารวม
+                const stayDuration = calculateStayDuration(
+                  b.CheckIn as unknown as Date,
+                  b.CheckOut as unknown as Date
+                ); // Calculate the number of nights stayed
 
-            return (
-              <>
-                <div className="payment-card" key={b.ID}>
-                  <table className="table-booking-list">
-                    <div className="card-header">
-                      <tr>
-                        <td
-                          style={{
-                            width: "500px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <h1 style={{ fontSize: "18px", marginTop:"10px" }}>Booking {b.ID}</h1>
-                          <div className="card-header-room-data">
-                            <h1
+                return (
+                  <>
+                    <div className="payment-card" key={b.ID}>
+                      <table className="table-booking-list">
+                        <div className="card-header">
+                          <tr>
+                            <td
                               style={{
-                                fontSize: "24px",
-                                wordBreak: "break-word", // หักคำถ้ามันยาวเกินไป
-                                overflowWrap: "break-word", // หักคำเมื่อมันเกินพื้นที่
-                                whiteSpace: "normal", // อนุญาตให้ขึ้นบรรทัดใหม่
-                              }}
-                            >
-                              {b.Customer?.Name} / Room {b.Room?.Address}
-                            </h1>
-                            {/* Display the price per night, stay duration, and total room price */}
-
-                            {/* Total price for booking */}
-                            <h1
-                              style={{
-                                fontSize: "24px",
+                                width: "500px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 flexDirection: "column",
                               }}
                             >
-                              {stayDuration} nights /{" "}
-                              {(b.TotalPrice ?? 0).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}{" "}
-                              ฿
-                            </h1>
-                          </div>
-                        </td>
-                        <td
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <div className="container-btn-payment">
-                            <button
-                              className="btn-confirm-booking"
-                              onClick={() => confirmBooking(b, totalAmount)}
-                            >
-                              Select
-                            </button>
-                            <button
-                              className="btn-cancel-booking"
-                              onClick={() =>
-                                confirmCancalBooking(b, b.RoomID as number)
-                              }
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    </div>
-                  </table>
-
-                  <div className="container-order-list">
-                    <table className="table-order-list">
-                      <thead>
-                        <tr>
-                          <th> No. </th>
-                          <th> Item </th>
-                          <th> Qty. </th>
-                          <th> Price </th>
-                          <th> Amount </th>
-                          <th> Action </th>
-                        </tr>
-                      </thead>
-                      {order.filter((o) => {
-                        const isOrderForCurrentBooking = o.BookingID === b.ID;
-                        const isNotCheckedOut = !payment.some(
-                          (pay) => pay.BookingID === o.BookingID
-                        );
-                        return isOrderForCurrentBooking && isNotCheckedOut;
-                      }).length === 0 ? (
-                        <tbody>
-                          <tr>
-                            <td colSpan={6} style={{ textAlign: "center" }}>
-                              No orders available
-                            </td>
-                          </tr>
-                        </tbody>
-                      ) : (
-                        order
-                          .filter((o) => {
-                            const isOrderForCurrentBooking =
-                              o.BookingID === b.ID;
-                            const isNotCheckedOut = !payment.some(
-                              (pay) => pay.BookingID === o.BookingID
-                            );
-                            return isOrderForCurrentBooking && isNotCheckedOut;
-                          })
-                          .map((o, index) => (
-                            <tbody key={o.ID}>
-                              <tr>
-                                <td>{index + 1}</td>
-                                <td>{o.Menu?.MenuList}</td>
-                                <td>{o.Amount}</td>
-                                <td>{o.Menu?.Price.toFixed(2)}</td>
-                                <td>
-                                  {o.Price.toLocaleString(undefined, {
+                              <h1 style={{ fontSize: "18px", marginTop: "10px" }}>
+                                Booking {b.ID}
+                              </h1>
+                              <div className="card-header-room-data">
+                                <h1
+                                  style={{
+                                    fontSize: "24px",
+                                    wordBreak: "break-word", // หักคำถ้ามันยาวเกินไป
+                                    overflowWrap: "break-word", // หักคำเมื่อมันเกินพื้นที่
+                                    whiteSpace: "normal", // อนุญาตให้ขึ้นบรรทัดใหม่
+                                  }}
+                                >
+                                  {b.Customer?.Name} / Room {b.Room?.Address}
+                                </h1>
+                                {/* Display the price per night, stay duration, and total room price */}
+                                <h1
+                                  style={{
+                                    fontSize: "24px",
+                                    flexDirection: "column",
+                                  }}
+                                >
+                                  {stayDuration} nights /{" "}
+                                  {(b.TotalPrice ?? 0).toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
                                   })}{" "}
                                   ฿
-                                </td>
-                                <td>
-                                  <button
-                                    className="btn-cancel-order"
-                                    onClick={() =>
-                                      confirmCancalOrder(o.ID as number)
-                                    }
-                                  >
-                                    Cancel
-                                  </button>
+                                </h1>
+                              </div>
+                            </td>
+                            <td
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <div className="container-btn-payment">
+                                <button
+                                  className="btn-confirm-booking"
+                                  onClick={() => confirmBooking(b, totalAmount)}
+                                >
+                                  Select
+                                </button>
+                                <button
+                                  className="btn-cancel-booking"
+                                  onClick={() =>
+                                    confirmCancalBooking(b, b.RoomID as number)
+                                  }
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        </div>
+                      </table>
+
+                      <div className="container-order-list">
+                        <table className="table-order-list">
+                          <thead>
+                            <tr>
+                              <th>No.</th>
+                              <th>Item</th>
+                              <th>Qty.</th>
+                              <th>Price</th>
+                              <th>Amount</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          {order.filter((o) => {
+                            const isOrderForCurrentBooking = o.BookingID === b.ID;
+                            const isNotCheckedOut = !payment.some(
+                              (pay) => pay.BookingID === o.BookingID
+                            );
+                            return isOrderForCurrentBooking && isNotCheckedOut;
+                          }).length === 0 ? (
+                            <tbody>
+                              <tr>
+                                <td colSpan={6} style={{ textAlign: "center" }}>
+                                  No orders available
                                 </td>
                               </tr>
                             </tbody>
-                          ))
-                      )}
-                    </table>
-                  </div>
+                          ) : (
+                            order
+                              .filter((o) => {
+                                const isOrderForCurrentBooking =
+                                  o.BookingID === b.ID;
+                                const isNotCheckedOut = !payment.some(
+                                  (pay) => pay.BookingID === o.BookingID
+                                );
+                                return isOrderForCurrentBooking && isNotCheckedOut;
+                              })
+                              .map((o, index) => (
+                                <tbody key={o.ID}>
+                                  <tr>
+                                    <td>{index + 1}</td>
+                                    <td>{o.Menu?.MenuList}</td>
+                                    <td>{o.Amount}</td>
+                                    <td>{o.Menu?.Price.toFixed(2)}</td>
+                                    <td>
+                                      {o.Price.toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      })}{" "}
+                                      ฿
+                                    </td>
+                                    <td>
+                                      <button
+                                        className="btn-cancel-order"
+                                        onClick={() =>
+                                          confirmCancalOrder(o.ID as number)
+                                        }
+                                      >
+                                        Cancel
+                                      </button>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              ))
+                          )}
+                        </table>
+                      </div>
 
-                  {/* เพิ่มราคารวมที่คำนวณไว้ */}
-                  <div className="payment-card-total-amount">
-                    <h1>
-                      Total Amount:{" "}
-                      {totalAmount.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{" "}
-                      ฿
-                    </h1>
-                  </div>
-                </div>
-              </>
-            );
-          })}
+                      {/* เพิ่มราคารวมที่คำนวณไว้ */}
+                      <div className="payment-card-total-amount">
+                        <h1>
+                          Total Amount:{" "}
+                          {totalAmount.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}{" "}
+                          ฿
+                        </h1>
+                      </div>
+                    </div>
+                  </>
+                );
+              })
+          )
+        )}
+
       </div>
     </div>
   );

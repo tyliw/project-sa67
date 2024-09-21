@@ -20,6 +20,7 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
+import UnknownPorfile from "./assets/Unknown-profile.webp"
 
 const { Option } = Select;
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
@@ -50,7 +51,13 @@ export default function UserCreate() {
   };
 
   const onFinish = async (values: EmployeeInterface) => {
-    values.Profile = fileList[0].thumbUrl;
+    // ตรวจสอบว่ามีการอัปโหลดไฟล์หรือไม่
+    if (fileList.length > 0 && fileList[0].thumbUrl) {
+      values.Profile = fileList[0].thumbUrl;
+    } else {
+      values.Profile = UnknownPorfile; // กำหนดค่า default หรือแจ้งเตือนว่าต้องอัปโหลดรูปภาพ
+    }
+
     console.log("Data sent to API:", values);
     try {
       const res = await CreateEmployee(values);
@@ -105,7 +112,7 @@ export default function UserCreate() {
           onFinish={onFinish}
           autoComplete="off"
           className="create-form"
-          style={{ boxShadow: "none", borderRadius: 0 }}
+          style={{ fontWeight: "lighter", boxShadow: "none", borderRadius: 0 }}
         >
           <Row gutter={20} justify="start" style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24}>
@@ -138,7 +145,7 @@ export default function UserCreate() {
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="First Name"
+                label="ชื่อจริง"
                 name="FirstName"
                 rules={[{ required: true, message: "กรุณากรอกชื่อ !" }]}
               >
@@ -147,7 +154,7 @@ export default function UserCreate() {
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="Last Name"
+                label="นามสกุล"
                 name="LastName"
                 rules={[{ required: true, message: "กรุณากรอกนามสกุล !" }]}
               >
@@ -156,16 +163,34 @@ export default function UserCreate() {
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="Email"
+                label="อีเมล"
                 name="Email"
-                rules={[{ required: true, message: "กรุณากรอกอีเมล !" }]}
+                rules={[
+                  { type: "email", message: "รูปแบบอีเมลไม่ถูกต้อง!" },
+                  { required: true, message: "กรุณากรอกอีเมล !" },
+                ]}
               >
                 <Input placeholder="Enter email" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="Gender"
+                label="รหัสผ่าน"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+
+                    message: "กรุณากรอกรหัสผ่าน !",
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+              <Form.Item
+                label="เพศ"
                 name="Gender"
                 rules={[{ required: true, message: "กรุณาระบุเพศ !" }]}
               >
@@ -178,7 +203,7 @@ export default function UserCreate() {
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="Date of Birth"
+                label="วัน/เดือน/ปี เกิด"
                 name="Date_of_Birth"
                 rules={[{ required: true, message: "กรุณาเลือกวันเกิด !" }]}
               >
@@ -188,7 +213,7 @@ export default function UserCreate() {
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
                 name="PositionID"
-                label="Position"
+                label="ตำแหน่ง"
                 rules={[{ required: true, message: "กรุณาระบุตำแหน่ง !" }]}
               >
                 <Select placeholder="Select a position" allowClear>

@@ -21,7 +21,7 @@ import {
   GetCustomers,
   UpdateRoom,
 } from "../../services/https";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RoomTypesInterface } from "../../interfaces/IRoomTypes";
 import { RoomInterface } from "../../interfaces/IRoom";
 import moment from "moment";
@@ -38,17 +38,20 @@ function CustomerCreate() {
   const [checkInDate, setCheckInDate] = useState<moment.Moment | null>(null); // State to store CheckIn date
   const [checkOutDate, setCheckOutDate] = useState<moment.Moment | null>(null); // State to store CheckOut date
 
-  
   const [dayDifference, setDayDifference] = useState<number | null>(null); // State to store day difference
   const [totalPrice, setTotalPrice] = useState<number | null>(null); // State to store total price
 
   const onFinish = async (values: BookingInterface) => {
     const formattedValues: BookingInterface = {
       ...values,
-      CheckIn: values.CheckIn ? moment(values.CheckIn).format("YYYY-MM-DD") : "",
-      CheckOut: values.CheckOut ? moment(values.CheckOut).format("YYYY-MM-DD") : "",
+      CheckIn: values.CheckIn
+        ? moment(values.CheckIn).format("YYYY-MM-DD")
+        : "",
+      CheckOut: values.CheckOut
+        ? moment(values.CheckOut).format("YYYY-MM-DD")
+        : "",
     };
-  
+
     // Build the bookingData object and include the calculated totalPrice
     const bookingData: BookingInterface = {
       CheckIn: values.CheckIn,
@@ -57,11 +60,11 @@ function CustomerCreate() {
       CustomerID: formattedValues.CustomerID,
       RoomID: formattedValues.RoomID,
     };
-  
+
     const res = await CreateBooking(bookingData);
     console.log("CreateBooking", bookingData);
     console.log(res);
-  
+
     if (res) {
       messageApi.open({
         type: "success",
@@ -82,9 +85,8 @@ function CustomerCreate() {
         type: "error",
         content: "เกิดข้อผิดพลาด !",
       });
-      
     }
-  
+
     // Fetch the selected room and update its status
     const selectedRoom = rooms.find((room) => room.ID === selectRoom);
     if (selectedRoom) {
@@ -92,7 +94,7 @@ function CustomerCreate() {
         ...selectedRoom,
         Status: "Occupied", // update status room "Vacant" ----> "Occupied"
       };
-  
+
       console.log("roomUpdate = ", roomUpdate);
       const roomPatch = await UpdateRoom(roomUpdate);
       console.log("Update Successful: ", roomPatch);
@@ -100,7 +102,6 @@ function CustomerCreate() {
       console.error("Selected room not found");
     }
   };
-  
 
   const getTypeRooms = async () => {
     const res = await GetTypeRooms();
@@ -134,7 +135,10 @@ function CustomerCreate() {
   }, []);
 
   // Calculate the difference between CheckIn and CheckOut dates
-  const calculateDayDifference = (checkIn: moment.Moment | null, checkOut: moment.Moment | null) => {
+  const calculateDayDifference = (
+    checkIn: moment.Moment | null,
+    checkOut: moment.Moment | null
+  ) => {
     if (checkIn && checkOut) {
       const diff = checkOut.diff(checkIn, "days");
       setDayDifference(diff);
@@ -144,7 +148,10 @@ function CustomerCreate() {
   };
 
   // Calculate the total price based on the selected room's price per night and day difference
-  const calculateTotalPrice = (selectedRoomID: number | undefined, dayDiff: number | null) => {
+  const calculateTotalPrice = (
+    selectedRoomID: number | undefined,
+    dayDiff: number | null
+  ) => {
     const selectedRoom = rooms.find((room) => room.ID === selectedRoomID);
     if (selectedRoom && selectedRoom.RoomTypes && dayDiff !== null) {
       // Access PricePerNight from RoomTypes instead of Room
@@ -168,7 +175,7 @@ function CustomerCreate() {
     <div>
       {contextHolder}
       <Card>
-        <h2>เพิ่มข้อมูลการจองห้อง</h2>
+        <h2 style={{fontSize:"26px"}}>Add Room Booking</h2>
         <Divider />
         <Form
           form={form}
@@ -179,39 +186,40 @@ function CustomerCreate() {
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={24} lg={12}>
-                <Form.Item
-                  name="CustomerID"
-                  label="ชื่อลูกค้า"
-                  rules={[{ required: true, message: "กรุณาเลือกชื่อลูกค้า!" }]}
+              <Form.Item
+                name="CustomerID"
+                label="Customer Name"
+                rules={[{ required: true, message: "Please select a customer name!" }]}
+              >
+                <Select
+                  showSearch // เพื่อเปิดการค้นหาชื่อ
+                  allowClear
+                  placeholder="Search or select customer name"
+                  optionFilterProp="children"
+                  onChange={(value) => form.setFieldValue("CustomerID", value)}
+                  filterOption={(input, option) =>
+                    (option?.children ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                 >
-                  <Select
-                    showSearch // เพื่อเปิดการค้นหาชื่อ
-                    allowClear
-                    placeholder="ค้นหาหรือเลือกชื่อลูกค้า"
-                    optionFilterProp="children"
-                    onChange={(value) => form.setFieldValue("CustomerID", value)}
-                    filterOption={(input, option) =>
-                      (option?.children ?? '').toLowerCase().includes(input.toLowerCase())
-                    }
-                  >
-                    {customers.map((item) => (
-                      <Option value={item.ID} key={item.ID}>
-                        {item.Name}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                {/* เพิ่มปุ่มลิงก์ไปยังหน้าเพิ่มชื่อ */}
-                <Form.Item>
-                  <Button type="link" href="/login/customer">
-                    เพิ่มชื่อลูกค้าใหม่
-                  </Button>
-                </Form.Item>
+                  {customers.map((item) => (
+                    <Option value={item.ID} key={item.ID}>
+                      {item.Name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              {/* เพิ่มปุ่มลิงก์ไปยังหน้าเพิ่มชื่อ */}
+              <Form.Item>
+                <Button type="link" href="/login/customer">
+                  Add New Customer
+                </Button>
+              </Form.Item>
             </Col>
 
-
             <Col xs={24} sm={24} md={24} lg={12}>
-              <Form.Item label="วัน/เดือน/ปี ที่เข้าที่พัก" name="CheckIn">
+              <Form.Item label="Check-in Date" name="CheckIn" rules={[{ required: true, message: "Please select check-in time!" }]}>
                 <DatePicker
                   style={{ width: "100%" }}
                   disabledDate={(current) => {
@@ -223,13 +231,15 @@ function CustomerCreate() {
             </Col>
 
             <Col xs={24} sm={24} md={24} lg={12}>
-              <Form.Item label="วัน/เดือน/ปี ที่ออก" name="CheckOut">
+              <Form.Item label="Check-Out Date" name="CheckOut" rules={[{ required: true, message: "Please select check-out time!" }]}>
                 <DatePicker
                   style={{ width: "100%" }}
                   disabled={!checkInDate} // Disable CheckOut field until CheckIn is selected
                   disabledDate={(current) => {
                     return (
-                      current && current <= (checkInDate ? checkInDate : moment().startOf("day"))
+                      current &&
+                      current <=
+                        (checkInDate ? checkInDate : moment().startOf("day"))
                     );
                   }}
                   onChange={(date) => setCheckOutDate(date)} // Set check-out date when selected
@@ -240,8 +250,8 @@ function CustomerCreate() {
             <Col xs={24} sm={24} md={24} lg={12}>
               <Form.Item
                 name="TypeRoomID"
-                label="ประเภทห้อง"
-                rules={[{ required: true, message: "กรุณาเลือกประเภทห้อง !" }]}
+                label="Room Type"
+                rules={[{ required: true, message: "Please select the room type you wish to stay in!" }]}
               >
                 <Select allowClear onChange={(value) => setTypeRoom(value)}>
                   {typerooms.map((item) => (
@@ -256,17 +266,17 @@ function CustomerCreate() {
             <Col xs={24} sm={24} md={24} lg={12}>
               <Form.Item
                 name="RoomID"
-                label="หมายเลขห้อง"
-                rules={[{ required: true, message: "กรุณาเลือกห้องที่ต้องการพัก !" }]}
+                label="Room Number"
+                rules={[
+                  { required: true, message: "Please select the room you wish to stay in!" },
+                ]}
               >
-                <Select
-                  allowClear
-                  onChange={(value) => setSelectRoom(value)}
-                >
+                <Select allowClear onChange={(value) => setSelectRoom(value)}>
                   {rooms
                     .filter(
                       (room) =>
-                        room.RoomTypes?.ID === typeroom && room.Status === "Vacant"
+                        room.RoomTypes?.ID === typeroom &&
+                        room.Status === "Vacant"
                     )
                     .map((item) => (
                       <Option value={item.ID} key={item.Address}>
@@ -276,7 +286,6 @@ function CustomerCreate() {
                 </Select>
               </Form.Item>
             </Col>
-
           </Row>
 
           {/* Display the difference in days */}
@@ -292,7 +301,10 @@ function CustomerCreate() {
           {totalPrice !== null && (
             <Row gutter={[16, 16]}>
               <Col>
-                <p>ราคาที่ต้องชำระ: {totalPrice} บาท</p>
+                <p>ราคาที่ต้องชำระ: {totalPrice.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })} บาท</p>
               </Col>
             </Row>
           )}
@@ -301,15 +313,20 @@ function CustomerCreate() {
             <Col>
               <Form.Item>
                 <Space>
-                  <Link to="/login/dashboard">
-                    <Button htmlType="button">ยกเลิก</Button>
-                  </Link>
+                  <Button
+                    htmlType="button"
+                    onClick={() => {
+                      form.resetFields();
+                    }}
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     type="primary"
                     htmlType="submit"
                     icon={<PlusOutlined />}
                   >
-                    ยืนยัน
+                    Submit
                   </Button>
                 </Space>
               </Form.Item>

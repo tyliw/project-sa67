@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { PieChartOutlined, UserOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, Layout, Menu, MenuProps, theme } from 'antd';
@@ -32,9 +32,8 @@ const items: MenuItem[] = [
   getItem('Room', 'sub1', undefined, [
     getItem(<Link to="/login/room">Booking</Link>, '2', <MdOutlineBedroomParent />),
     getItem(<Link to="/login/customer">Create Customer</Link>, '3', <UserOutlined />),
-    //getItem(<Link to="/login/edit">Edite Booking</Link>, '4', <MdBorderColor />),
   ]),
-  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '4', <MdMeetingRoom/>),
+  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '4', <MdMeetingRoom />),
   getItem('Food', 'sub2', undefined, [
     getItem(<Link to="/login/food-service">Food Service</Link>, '5', <MdFastfood />),
     getItem(<Link to="/login/manage-data">Manage Data</Link>, '6', <TableOutlined />),
@@ -48,10 +47,25 @@ const items: MenuItem[] = [
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation(); // ใช้ useLocation เพื่อตรวจสอบ path ปัจจุบัน
 
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  // ฟังก์ชันเพื่อจับคู่ path กับ key ในเมนู
+ const getSelectedKey = () => {
+  if (location.pathname === "/login/payment_history") return '9'; // ตรวจสอบ payment_history ก่อน
+  if (location.pathname === "/login/payment") return '8'; // ตรวจสอบ payment หลัง
+  if (location.pathname.includes("/login/room")) return '2';
+  if (location.pathname.includes("/login/customer")) return '3';
+  if (location.pathname.includes("/login/meeting-room")) return '4';
+  if (location.pathname.includes("/login/food-service")) return '5';
+  if (location.pathname.includes("/login/manage-data")) return '6';
+  if (location.pathname.includes("/login/employee")) return '7';
+  return '1'; // ค่าเริ่มต้น
+};
+
 
   return (
     <>
@@ -61,12 +75,12 @@ const App: React.FC = () => {
             <img
                 src={logo}
                 alt="Logo"
-                style={{ width: "80%", margin: "10px"}}
+                style={{ width: "80%", margin: "10px" }}
               />
           </div>
           <Menu
             theme="dark"
-            defaultSelectedKeys={['1']}
+            selectedKeys={[getSelectedKey()]} // ใช้ selectedKeys แทน defaultSelectedKeys
             mode="inline"
             items={items}
           />

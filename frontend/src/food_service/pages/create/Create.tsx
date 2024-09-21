@@ -118,8 +118,10 @@ const Create: React.FC = () => {
     return (
         <div className='create-page'>
             {contextHolder}
-            <Card className='create-card' style={{ padding: '0px' }}>
+            <Col span={12}>   
                 <h2 className='create-card-header'>Add Menu</h2>
+            </Col>
+            <Card className='create-card' style={{ padding: '0px' }}>
                 <Divider />
                 <Form
                     name="basic"
@@ -132,7 +134,7 @@ const Create: React.FC = () => {
                     <Row gutter={20} justify="start" style={{ width: '100%' }}>
                         <Col xs={24} sm={24} md={24} lg={24} xl={12}>
                             <Form.Item
-                            label="ImageMenu"
+                            label="Image Menu"
                             name="ImageMenu"
                             valuePropName="fileList"
                             >

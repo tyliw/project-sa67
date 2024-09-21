@@ -6,6 +6,7 @@ export interface EmployeeInterface {
     Email?: string;
     Gender?: string;
     Date_of_Birth?: string;
+    Password?: string
     PositionID?: number;
     Position_Name?: string;
   }

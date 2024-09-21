@@ -45,7 +45,7 @@ function CustomerCreate() {
     <div>
       {contextHolder}
       <Card>
-        <h2> เพิ่มข้อมูลลูกค้า</h2>
+        <h2 style={{fontSize:"26px"}}> Add Customer</h2>
         <Divider />
         <Form
           form={form}  // Link the form instance
@@ -57,12 +57,12 @@ function CustomerCreate() {
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="ชื่อจริง"
+                label="Name"
                 name="Name"
                 rules={[
                   {
                     required: true,
-                    message: "กรุณากรอกชื่อ !",
+                    message: "Please enter your name !",
                   },
                 ]}
               >
@@ -72,16 +72,16 @@ function CustomerCreate() {
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="อีเมล"
+                label="Email"
                 name="Email"
                 rules={[
                   {
                     type: "email",
-                    message: "รูปแบบอีเมลไม่ถูกต้อง !",
+                    message: "The email format is incorrect !",
                   },
                   {
                     required: true,
-                    message: "กรุณากรอกอีเมล !",
+                    message: "Please enter your email !",
                   },
                 ]}
               >
@@ -91,12 +91,12 @@ function CustomerCreate() {
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="ที่อยู่"
+                label="Address"
                 name="Address"
                 rules={[
                   {
                     required: true,
-                    message: "กรุณากรอกที่อยู่ !",
+                    message: "Please enter your address !",
                   },
                 ]}
               >
@@ -106,20 +106,20 @@ function CustomerCreate() {
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="เบอร์โทร"
+                label="Phone Number"
                 name="PhoneNumber"
                 rules={[
                   {
                     required: true,
-                    message: "กรุณากรอกเบอร์โทรศัพท์!",
+                    message: "Please enter your phone number !",
                   },
                   {
                     pattern: /^[0-9]{10}$/,
-                    message: "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลักเท่านั้น!",
+                    message: "Phone number must be 10 digits only !",
                   },
                 ]}
               >
-                <Input maxLength={10} placeholder="กรอกเบอร์โทร (10 หลัก)" />
+                <Input maxLength={10} placeholder="Enter phone number (10 digits)" />
               </Form.Item>
             </Col>
           </Row>
@@ -127,15 +127,21 @@ function CustomerCreate() {
             <Col style={{ marginTop: "40px" }}>
               <Form.Item>
                 <Space>
-                  <Button htmlType="button" style={{ marginRight: "10px" }}>
-                    ยกเลิก
+                  <Button 
+                    htmlType="button" 
+                    style={{ marginRight: "10px" }}
+                    onClick={() => {
+                      form.resetFields();
+                    }}
+                  >
+                    Cancel
                   </Button>
                   <Button
                     type="primary"
                     htmlType="submit"
                     icon={<PlusOutlined />}
                   >
-                    ยืนยัน
+                    Submit
                   </Button>
                 </Space>
               </Form.Item>

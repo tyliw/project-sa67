@@ -1,16 +1,19 @@
 package employee
 
 import (
+	"errors"
 	"net/http"
-	"github.com/gin-gonic/gin"
-	"project-sa67/entity/employee"
 	"project-sa67/config"
+	"project-sa67/entity/employee"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // POST /employees
 func CreateEmployee(c *gin.Context) {
 	var employee entity.Employee
 
+	// Bind JSON to the employee struct
 	if err := c.ShouldBindJSON(&employee); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -18,21 +21,46 @@ func CreateEmployee(c *gin.Context) {
 
 	db := config.DB()
 
-	// ค้นหา Position ด้วย PositionID
+	// Check if a position with the provided PositionID exists
 	var position entity.Position
 	db.First(&position, employee.PositionID)
 	if position.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "position not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Position not found"})
 		return
 	}
 
-	// สร้าง Employee
+	// Check if the employee with the provided email already exists
+	var existingEmployee entity.Employee
+	result := db.Where("email = ?", employee.Email).First(&existingEmployee)
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		// If there's a database error other than "record not found"
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	if existingEmployee.ID != 0 {
+		// If the email is already registered
+		c.JSON(http.StatusConflict, gin.H{"error": "Email is already registered"})
+		return
+	}
+
+	// Hash the password
+	hashedPassword, err := config.HashPassword(employee.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Password encryption failed"})
+		return
+	}
+
+	// Assign the hashed password back to the employee struct
+	employee.Password = hashedPassword
+
+	// Create the employee in the database
 	if err := db.Create(&employee).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Created success", "data": employee})
+	c.JSON(http.StatusCreated, gin.H{"message": "Employee created successfully", "data": employee})
 }
 
 // GET /employees/:id

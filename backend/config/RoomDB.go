@@ -130,8 +130,8 @@ func SetupRoomDatabase() {
 	db.FirstOrCreate(&customer2)
 
 	// Seed Bookings
-	booking1 := entity.Booking{CheckIn: time.Now(), CustomerID: &customer1.ID, RoomID: &room101.ID, TotalPrice: 500}
-	booking2 := entity.Booking{CheckIn: time.Now(), CustomerID: &customer2.ID, RoomID: &room201.ID, TotalPrice: 1500}
+	booking1 := entity.Booking{CheckIn: time.Now(), CheckOut: time.Now().Add(48 * time.Hour), CustomerID: &customer1.ID, RoomID: &room101.ID, TotalPrice: 500}
+	booking2 := entity.Booking{CheckIn: time.Now(), CheckOut: time.Now().Add(48 * time.Hour), CustomerID: &customer2.ID, RoomID: &room201.ID, TotalPrice: 1500}
 
 	db.Create(&booking1)
 	db.Create(&booking2)

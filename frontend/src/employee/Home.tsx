@@ -1,5 +1,5 @@
 // import React from "react";
-import Navbar from './navbar.tsx';
+// import Navbar from './navbar.tsx';
 import Users from './Users.tsx';
 // import {Routes, Route,} from "react-router-dom";
 // import UserCreate from "./UsersCreate.tsx";
@@ -9,7 +9,7 @@ import Users from './Users.tsx';
 function Home() {
     return (
         <>
-            <Navbar />
+            {/* <Navbar /> */}
             <Users/>
             {/* <Routes>
                 <Route path="/" element={<Users/>} />

@@ -29,19 +29,21 @@ export default function UsersUpdate() {
       Date_of_Birth: values.Date_of_Birth ? dayjs(values.Date_of_Birth).toISOString() : "",
       Profile: fileList.length > 0 ? fileList[0].thumbUrl : employee?.Profile, // Use new profile image or keep old one
     };
+
+    console.log("updatedEmployee: ", updatedEmployee)
     try {
       const res = await UpdateEmployee(updatedEmployee.ID, updatedEmployee);
       if (res) {
-        messageApi.success("อัปเดตข้อมูลสำเร็จ!");
+        messageApi.success("Update successful!");
         setTimeout(() => {
           navigate("/login/employee"); // เปลี่ยนเส้นทางไปหน้าแรก
         }, 2000);
       } else {
-        messageApi.error("อัปเดตข้อมูลไม่สำเร็จ!");
+        messageApi.error("Update failed!");
       }
     } catch (error) {
       console.error("Error updating employee:", error);
-      messageApi.error("เกิดข้อผิดพลาดในการอัปเดตข้อมูล!");
+      messageApi.error("An error occurred while updating the data!");
     }
   };
 
@@ -106,12 +108,14 @@ export default function UsersUpdate() {
     <React.Fragment>
       {contextHolder}
       <CssBaseline />
-      <Container maxWidth="sm" sx={{ p: 2 }}>
+      <Container maxWidth="sm" sx={{ p: 2 }} >
         <Form
           form={form}
           layout="vertical"
           onFinish={onFinish}
           autoComplete="off"
+          style={{ boxShadow: "none", borderRadius: 0 }}
+          
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={24}>
@@ -217,6 +221,7 @@ export default function UsersUpdate() {
             </Col>
           </Row>
         </Form>
+     
       </Container>
     </React.Fragment>
   );

@@ -1,7 +1,6 @@
 package employee
 
 import (
-	"errors"
 	"net/http"
 	"project-sa67/config"
 	"project-sa67/entity/employee"
@@ -44,54 +43,54 @@ type (
 )
 
 
-func SignUp(c *gin.Context) {
-	var payload signUp
+// func SignUp(c *gin.Context) {
+// 	var payload signUp
 
-	// Bind JSON payload to the struct
-	if err := c.ShouldBindJSON(&payload); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	// Bind JSON payload to the struct
+// 	if err := c.ShouldBindJSON(&payload); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	db := config.DB()
+// 	db := config.DB()
 
-	var userCheck entity.Employee
+// 	var userCheck entity.Employee
 
-	// Check if the user with the provided email already exists
-	result := db.Where("email = ?", payload.Email).First(&userCheck)
-	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		// If there's a database error other than "record not found"
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
-	}
+// 	// Check if the user with the provided email already exists
+// 	result := db.Where("email = ?", payload.Email).First(&userCheck)
+// 	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+// 		// If there's a database error other than "record not found"
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+// 		return
+// 	}
 
-	if userCheck.ID != 0 {
-		// If the user with the provided email already exists
-		c.JSON(http.StatusConflict, gin.H{"error": "Email is already registered"})
-		return
-	}
+// 	if userCheck.ID != 0 {
+// 		// If the user with the provided email already exists
+// 		c.JSON(http.StatusConflict, gin.H{"error": "Email is already registered"})
+// 		return
+// 	}
 
-	// Hash the user's password
-	hashedPassword, _ := config.HashPassword(payload.Password)
+// 	// Hash the user's password
+// 	hashedPassword, _ := config.HashPassword(payload.Password)
 
-	// Create a new employee record
-	employee := entity.Employee{
-		FirstName:   payload.FirstName,
-		LastName:    payload.LastName,
-		Email:       payload.Email,
-		Password:    hashedPassword,
-		Gender:      payload.Gender, // Placeholder, adjust as needed
-		Date_of_Birth: payload.Date_of_Birth, // Make sure the field matches
-	}
+// 	// Create a new employee record
+// 	employee := entity.Employee{
+// 		FirstName:   payload.FirstName,
+// 		LastName:    payload.LastName,
+// 		Email:       payload.Email,
+// 		Password:    hashedPassword,
+// 		Gender:      payload.Gender, // Placeholder, adjust as needed
+// 		Date_of_Birth: payload.Date_of_Birth, // Make sure the field matches
+// 	}
 
-	// Save the employee to the database
-	if err := db.Create(&employee).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	// Save the employee to the database
+// 	if err := db.Create(&employee).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Sign-up successful", "data": employee})
-}
+// 	c.JSON(http.StatusCreated, gin.H{"message": "Sign-up successful", "data": employee})
+// }
 
 
 

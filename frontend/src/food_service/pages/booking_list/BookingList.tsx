@@ -78,63 +78,76 @@ const BookingList: React.FC = () => {
         </Col>
         <Divider />
         <div className="booking-list-page">
-          {booking
-            .filter((book) => {
-              const isRoomOccupied = book.Room?.Status === "Occupied";
-              const isNotCheckedOut = !payment.some(
-                (pay) => pay.BookingID === book.ID
-              );
-              return isRoomOccupied && isNotCheckedOut;
-            })
-            .map((book) => (
-              <div
-                key={book.ID}
-                className="booking-item-crad"
-                onClick={() => {
-                  if (book.ID !== undefined) {
-                    navigate(`${location.pathname}/structure/${book.ID}`, {
-                      state: { bookingID: book.ID },
-                    });
-                  }
-                }}
-              >
-                <div className="cardWrap">
-                  <div className="card cardLeft">
-                    <h1>Booking {book.ID}</h1>
-                    <div className="title">
-                      <h2>Name</h2>
-                      <span>{book.Customer?.Name}</span>
+          {booking.length === 0 ? (
+            <div>No bookings available</div>
+          ) : (
+            booking
+              .filter((book) => {
+                const isRoomOccupied = book.Room?.Status === "Occupied";
+                const isNotCheckedOut = !payment.some(
+                  (pay) => pay.BookingID === book.ID
+                );
+                return isRoomOccupied && isNotCheckedOut;
+              })
+              .length === 0 ? (
+              <div>No bookings available</div>
+            ) : (
+              booking
+                .filter((book) => {
+                  const isRoomOccupied = book.Room?.Status === "Occupied";
+                  const isNotCheckedOut = !payment.some(
+                    (pay) => pay.BookingID === book.ID
+                  );
+                  return isRoomOccupied && isNotCheckedOut;
+                })
+                .map((book) => (
+                  <div
+                    key={book.ID}
+                    className="booking-item-crad"
+                    onClick={() => {
+                      if (book.ID !== undefined) {
+                        navigate(`${location.pathname}/structure/${book.ID}`, {
+                          state: { bookingID: book.ID },
+                        });
+                      }
+                    }}
+                  >
+                    <div className="cardWrap">
+                      <div className="card cardLeft">
+                        <h1>Booking {book.ID}</h1>
+                        <div className="title">
+                          <h2>Name</h2>
+                          <span>{book.Customer?.Name}</span>
+                        </div>
+                        <div className="name">
+                          <h2>Room Type</h2>
+                          <span>{getRoomTypeName(book.Room?.RoomTypesID)}</span>
+                        </div>
+                        <div className="seat">
+                          <h2>{book.Room?.Address}</h2>
+                          <span>number</span>
+                        </div>
+                      </div>
+                      <div className="card cardRight">
+                        <MdBedroomParent
+                          style={{
+                            marginTop: "-5px",
+                            width: "40px",
+                            height: "40px",
+                            color: "white",
+                          }}
+                        />
+                        <div className="number">
+                          <h3>{book.Room?.Address}</h3>
+                          <span>number</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="name">
-                      <h2>Room Type</h2>
-                      <span>{getRoomTypeName(book.Room?.RoomTypesID)}</span>
-                    </div>
-                    <div className="seat">
-                      <h2>{book.Room?.Address}</h2>
-                      <span>number</span>
-                    </div>
-                    {/* <div className="time">
-                      <h2>{formatDate(book.CheckIn)}</h2>
-                      <span>Check In</span>
-                    </div> */}
                   </div>
-                  <div className="card cardRight">
-                    <MdBedroomParent
-                      style={{
-                        marginTop: "-5px",
-                        width: "40px",
-                        height: "40px",
-                        color: "white",
-                      }}
-                    />
-                    <div className="number">
-                      <h3>{book.Room?.Address}</h3>
-                      <span>number</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+                ))
+            )
+          )}
+
         </div>
       </div>
     </>
