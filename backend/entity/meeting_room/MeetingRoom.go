@@ -11,7 +11,6 @@ type MeetingRoom struct{
 	AirCondition int
 	Chair int
 	Type string
-
+	Image string `gorm:"type:longtext"`
 	Customers []CustomerMeetingRoom `gorm:"many2many:ManageRoom;"`
-	
 }

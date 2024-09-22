@@ -34,15 +34,19 @@ func CreateBookingMeetingRoom(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Meeting Room not found"})
 		return
 	}
+	var duration entity.Duration
+	if err := db.First(&duration, manageRoom.DurationID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Meeting Room not found"})
+		return
+	}
 
 	// Create a new ManageRoom record
 	b := entity.ManageRoom{
-		DateTime: 		   manageRoom.DateTime,	
-		StartTime:     manageRoom.StartTime,
-		EndTime:       manageRoom.EndTime,
+		DateTime: 	   manageRoom.DateTime,	
 		TotalPeople:   manageRoom.TotalPeople,
 		CustomerID:    manageRoom.CustomerID,
 		Customer:      customer,
+		DurationID:    duration.ID,
 		MeetingRoomID: manageRoom.MeetingRoomID,
 		MeetingRoom:   meetingRoom,
 	}
@@ -65,7 +69,7 @@ func GetBookingMeetingRoom(c *gin.Context) {
 	var booking entity.ManageRoom
 
 	db := config.DB()
-	results := db.Preload("Gender").First(&booking, ID)
+	results := db.First(&booking, ID)
 	if results.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": results.Error.Error()})
 		return
@@ -76,6 +80,8 @@ func GetBookingMeetingRoom(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, booking)
 }
+
+
 
 // GET /Bookings
 func ListBookingMeetingRoom(c *gin.Context) {
@@ -94,14 +100,44 @@ func ListBookingMeetingRoom(c *gin.Context) {
 func DeleteBookingMeetingRoom(c *gin.Context) {
 
 	id := c.Param("id")
-	db := config.DB()
-	if tx := db.Exec("DELETE FROM ManagRoom WHERE id = ?", id); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id not found"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "Deleted successful"})
+    db := config.DB()
+
+    result := db.Delete(&entity.ManageRoom{}, id)
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "An unexpected error occurred"})
+        return
+    }
+    if result.RowsAffected == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Booking meeting room with the specified ID not found"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Booking meeting room deleted successfully"})
 
 }
+
+func GetBookingByMeetingRoomByID(c *gin.Context) {
+
+    id := c.Param("id")
+	// dateTime := c.Query("date_time") 
+    db := config.DB()
+
+    var bookings []struct {
+        DateTime string `json:"DateTime"`
+        StartTime string `json:"StartTime"`
+        EndTime string `json:"EndTime"`
+    }
+
+    if tx := db.Table("manage_rooms").Where("meeting_room_id = ? ", id).Find(&bookings); tx.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query failed"})
+        return
+    } else if tx.RowsAffected == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"error": "No bookings found for the given meeting room ID and DateTime"})
+        return
+    }
+    c.JSON(http.StatusOK, bookings)
+}
+
 
 // PATCH /Booking
 func UpdateBookingMeetingRoom(c *gin.Context) {

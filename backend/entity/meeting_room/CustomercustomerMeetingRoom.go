@@ -6,7 +6,6 @@ import (
 
 type CustomerMeetingRoom struct {
 	gorm.Model
-	// CustomerId  uint `gorm:"primaryKey"`
 	First_Name string
 	Last_Name string
 	Tel string

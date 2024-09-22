@@ -32,7 +32,10 @@ const items: MenuItem[] = [
     getItem(<Link to="/login/room">Booking</Link>, '2', <MdOutlineBedroomParent />),
     getItem(<Link to="/login/customer">Create Customer</Link>, '3', <UserOutlined />),
   ]),
-  getItem(<Link to="/login/meeting-room">Meeting Room</Link>, '4', <MdMeetingRoom />),
+  getItem('Meeting Room', 'sub4', undefined, [
+    getItem(<Link to="/login/meeting-rooms">Meeting room</Link>, '4', <MdMeetingRoom />),
+    getItem(<Link to="/login/booking-meeting-rooms">Booking</Link>, '10', <MdMeetingRoom />),
+  ]),
   getItem('Food', 'sub2', undefined, [
     getItem(<Link to="/login/food-service">Food Service</Link>, '5', <MdFastfood />),
     getItem(<Link to="/login/manage-data">Manage Data</Link>, '6', <TableOutlined />),
@@ -59,7 +62,8 @@ const App: React.FC = () => {
   if (location.pathname === "/login/payment") return '8'; // ตรวจสอบ payment หลัง
   if (location.pathname.includes("/login/room")) return '2';
   if (location.pathname.includes("/login/customer")) return '3';
-  if (location.pathname.includes("/login/meeting-room")) return '4';
+  if (location.pathname.includes("/login/meeting-rooms")) return '4';
+  if (location.pathname.includes("/login/booking-meeting-rooms")) return '10';
   if (location.pathname.includes("/login/food-service")) return '5';
   if (location.pathname.includes("/login/manage-data")) return '6';
   if (location.pathname.includes("/login/employee")) return '7';

@@ -64,10 +64,11 @@ func main() {
 
 		
 		// meetingRoom Routes
+		// meetingRoom Routes
 		router.GET("/meetingRoom", meeting_room.ListMeetingRoom)
 		router.GET("/meetingRoom/:id", meeting_room.GetMeetingRoom) // Corrected route name
 		router.POST("/meetingRoom", meeting_room.CreateMeetingRoom) // Assuming you want to create a meeting room
-		router.PATCH("/meetingRoom", meeting_room.UpdateMeetingRoom)
+		router.PATCH("/meetingRoom/:id", meeting_room.UpdateMeetingRoom)
 		router.DELETE("/meetingRoom/:id", meeting_room.DeleteMeetingRoom)
 
 		// customerMeetingRoom Routes
@@ -76,7 +77,9 @@ func main() {
 		router.POST("/customerMeetingRoom", meeting_room.CreateCustomerMeetingRoom) // Assuming you want to create a customer meeting room
 		router.PATCH("/customerMeetingRoom", meeting_room.UpdateCustomerMeetingRoom)
 		router.DELETE("/customerMeetingRoom/:id", meeting_room.DeleteCustomerMeetingRoom)
-
+		// duration with booking
+		router.GET("/duration",meeting_room.ListDuration)
+		router.GET("/bookingMeetingRoom/Date",meeting_room.GetDurationByBookingID)
 		// bookingMeetingRoom Routes
 		router.GET("/bookingMeetingRoom", meeting_room.ListBookingMeetingRoom)
 		router.GET("/bookingMeetingRoom/:id", meeting_room.GetBookingMeetingRoom) // Corrected route name
@@ -122,6 +125,17 @@ func main() {
 		// Dashboard
 		router.GET("/orders_per_day", dashboard.ListOrdersPerDay)
 		router.GET("/get_most_purchased_menu", dashboard.GetMostPurchasedMenu)
+		router.GET("/rooms_per_day", dashboard.ListRoomsPerDay)
+		router.GET("/peoples_per_day", dashboard.ListPeoplePerDay)
+		router.GET("/meeting_room_per_day", dashboard.ListManageRoomsPerDate)
+		router.GET("/booking_price_per_day", dashboard.ListBookingPricePerDay)
+		router.GET("/payments_per_month", dashboard.ListPaymentsPerMonth)
+		router.GET("/payments_per_day", dashboard.ListPaymentsPerDay)
+		router.GET("/peoples_per_month", dashboard.ListPeoplePerMonth)
+		router.GET("/room_type_percent", dashboard.ListRoomsTypePercent)
+		router.GET("/booking_per_month", dashboard.ListBookingsPerMonth)
+		router.GET("/order_per_month", dashboard.ListOrdersPerMonth)
+		router.GET("/meeting_room_per_month", dashboard.ListMeetingRoomsPerMonth)
 	}
 
 	r.GET("/", func(c *gin.Context) {

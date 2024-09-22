@@ -1,0 +1,99 @@
+.sidebarLogo{
+    width: 100%;
+    font-size: 3rem;
+}
+.sidebarLinkToPage{
+    display: flex;
+    height: 70%;
+    margin: 20px 0;
+    flex-flow: column;
+    /* background-color: white; */
+}
+.sidebarLink{
+    display: flex;
+    color:white;
+    margin: 5px 0;
+    align-items: end;
+    text-decoration: none;
+    padding-left: 10px;
+    gap: 10px;
+}
+.sidebarLink p{
+    margin:auto 0;
+    font: 1.2em sans-serif;
+    color:white;
+    text-decoration: none;
+    transition: 0.8s;
+}
+.sidebarLink .sidebarIcons{
+    font-size: 2em;
+}
+.sidebarLink:hover{
+    background: #1a43bf; 
+    border-radius: 10px;
+    transition: 0.5s;
+}
+
+.sidebarLink .active {
+    background: #1a43bf; 
+    border-radius: 10px;
+}
+.active{
+    transition: 0.8s;
+    color:chartreuse;
+    width: 10em;
+}
+.activeMenu p{
+    transition: 0.8s;
+    font-size: 0;
+    opacity: 0;
+}
+
+.buttomResposive{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    right: -20px;
+    top:50%;
+    transform: translate(0,-50%);
+    z-index: 10;
+    cursor: pointer;
+}
+.buttomResposiveIcons{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    text-align: end;
+    border-radius: 50%;
+    font-size: 2em;
+    opacity: 0;
+}
+.iconsBefore{
+    position: absolute;
+    filter:drop-shadow(2px 2px 20px red);
+}
+
+.iconsNext{
+    opacity: 0;
+    filter:drop-shadow(2px 2px 20px red);
+}
+.activeBack .iconsBefore{
+    opacity: 0;
+}
+.activeBack .iconsNext{
+    opacity: 1;
+}
+.buttomResposive:hover .buttomResposiveIcons{
+    opacity: 1;
+}
+
+.BBBBody{
+    height: 100%;
+    transition: 1s;
+}

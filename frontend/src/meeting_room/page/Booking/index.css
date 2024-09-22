@@ -1,0 +1,238 @@
+.BookingHeader{
+    display: flex;
+    justify-content:end;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    gap: 100px;
+    /* background-color: rgb(226, 200, 200); */
+    margin-bottom:10px ;
+}
+.booking_list{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background:white;
+    box-shadow: -2px -2px 10px rgb(255,255,255,.1),2px 2px 10px rgb(0,0,0,.1);
+    padding: 0 10px;
+    border-radius: 8px;
+    opacity: 0.7;
+}
+.booking_list span{
+    color: darkblue;
+    margin: 0 10px;
+    cursor: pointer;
+    /* background: violet; */
+}
+.BookingBefore{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color:#1a43bf;
+    cursor: pointer;
+}
+.FindeTime{
+    width: auto;
+    height: 100%;
+    padding: 0 10px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+.DateTime input[type='date']{
+    border: none;
+    background-color: transparent;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.DateTime:hover input[type='date']{
+    transform: scale(1.1,1.1);
+    cursor: pointer;
+}
+.peopleicon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2em;
+    color: white;
+    border-radius: 50%;
+    background-color: rgb(0, 0, 0);
+}
+.BookingLinkBefore{
+    color:#1a43bf;
+    text-decoration: none;
+}
+.BookingShowData{
+    height:calc(100% - 50px);
+    background-color: rgb(222, 222, 222);
+    border-radius: 8px;
+    padding: 10px;
+}
+.BookingShowDataFlex{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    gap: 10px;
+    border-radius: 8px;    
+    overflow-y: auto;
+    -ms-overflow-style: none;
+}
+.BookingShowDataFlex::-webkit-scrollbar{
+    display: none;
+}
+.BookingList{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(50% - 5px);
+    height: 250px;
+    padding: 25px;
+    border-radius: 5px;
+    /* color: rgb(185, 27, 27); */
+    background-color: white;
+    box-shadow: 2px 2px 10px rgb(255,255,255,.1),-2px -2px 10px rgb(0,0,0,.1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    filter: contrast(1.1) brightness(1.05);
+}
+.BookingList p{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    font-size: 2em;
+    color: white;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0, 0, 0, 1));
+}
+.BookingList:hover{
+    cursor: pointer;
+    box-shadow: 2px 2px 10px rgba(5, 163, 255, 0.437),-2px -2px 10px rgba(5, 163, 255, 0.437);
+    border: 2px solid rgb(23, 54, 255);
+}
+.BookingList:hover p {
+    opacity: 1;
+
+}
+.BookingPopup{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(0, 0, 0,.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.BookingPopup{
+    position: fixed;
+}
+
+.itembox3{
+    grid-area: itembox3;
+    background: royalblue;
+}
+.BookingSubmit{
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    padding: 10px;
+    width: 400px;
+    height: 490px;
+    background: tan;
+    position: relative;
+    padding-top: 25px;
+    border-radius: 8px;
+    animation: showPopup 0.4s linear;
+}
+.CloseBooking{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0.5;
+}
+@keyframes showPopup {
+    0%{
+        opacity: 0;
+    }
+    50%{
+        opacity: .5;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+.BookingShowDataList{
+    height: 90%;
+    background-color: rgb(222, 222, 222);
+    border-radius: 8px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+}
+.BookingShowDataList::-webkit-scrollbar{
+    display: none;
+}
+.BookingColumn{
+    display: grid;
+    position: sticky;
+    grid-template-columns: 50px  90px 100px 90px  repeat(4,1fr) 80px ;
+    background: rgb(43, 128, 246);
+    width: 100%;
+    height: auto;
+    color: white;
+    border-radius: 8px 8px 0 0;
+}
+.BookingColumn p:not(:nth-child(1)){
+    border-left: 1px solid rgba(255, 255, 255, 0.7) ;
+    padding-left: 8px;
+}
+.BookingColumn p:nth-child(1){
+    /* border-left: 1px solid rgba(0, 0, 0, 0.7) ; */
+    padding-left: 8px;
+}
+
+.BookingRow{
+    display: grid;
+    position: sticky;
+    grid-template-columns: 50px  90px 100px 90px  repeat(4,1fr) 80px ;
+    align-items: center;
+    background: rgb(255, 255, 255);
+    width: auto;
+    height: auto;
+    margin: 3px;
+    border-radius: 2px ;
+}
+
+.BookingRow p{
+    padding-left: 8px;
+}
+.BookingRow span{
+    width: 70px;
+    height: 20px;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    margin-left: 8px;
+    border-radius: 3px;
+    text-align: center;
+    background-color: royalblue;
+}
+.BookingRow span:hover{
+    color: rgb(244, 22, 22);
+}
+
+
+

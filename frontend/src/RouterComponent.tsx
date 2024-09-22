@@ -15,7 +15,9 @@ import Payment from './payment/payment';
 import PaymentMethod from './payment/pages/paymentmethod/paymentmethod';
 import PaymentHistory from './payment/pages/payment_history/PaymentHistory';
 import Receipt from './payment/pages/receipt/receipt';
-
+import MeetingRooms from './meeting_room/page/MeetingRoom/Meeting_Room'
+import BookingMeetingRooms from './meeting_room/page/Booking/index'
+import Dashboard from './meeting_room/page/Dashboard/Dashboard'
 
 const RouterComponent: React.FC = () => {
 
@@ -28,7 +30,7 @@ const RouterComponent: React.FC = () => {
       path: '/login',
       element: <App />, // เส้นทางหลังจาก login สำเร็จ
       children: [
-        { path: 'dashboard', element: <h2>Dashboard Content</h2> },
+        { path: 'dashboard', element: <Dashboard/> },
 
         // Room
         { path: 'room', 
@@ -58,7 +60,10 @@ const RouterComponent: React.FC = () => {
         { path: 'employee', element: <Home /> },
         { path: 'employee/create', element: <UserCreate /> },
         { path: 'employee/update/:id', element: <UsersUpdate /> },
-
+        
+        //meetingrooms
+        { path: 'meeting-rooms', element: <MeetingRooms /> },
+        { path: 'booking-meeting-rooms', element: <BookingMeetingRooms /> },
         // Payment
         { path: 'payment', element: <Payment /> },
         { path: 'receipt', element: <Receipt /> },

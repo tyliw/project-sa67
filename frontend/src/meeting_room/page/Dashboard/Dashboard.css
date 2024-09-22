@@ -1,0 +1,199 @@
+.Dashboardgrid {
+    margin: 0px;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    grid-template-rows:   100px repeat(3, 1fr) 120px;
+    grid-template-columns: repeat(5, 1fr) 240px;
+    grid-template-areas: 
+        "box1 box1 box1 box1 box1 box1"
+        "box3 box3 box3 box4 box4 box2"
+        "box3 box3 box3 box4 box4 box2"
+        "box6 box6 box6 box7 box7 box7"
+        "box6 box6 box6 box7 box7 box7";
+    gap:10px
+}
+.boxbox{
+    display: flex;
+    justify-content: center;
+    box-shadow: 1px 1px 10px rgb(0, 0, 0,.1), -1px -1px 10px rgb(0, 0, 0,.1);
+    border-radius: 8px;
+}
+.box1 {
+    grid-area: box1;
+    display: flex;
+    padding: 5px;
+    gap:15px;
+    box-shadow: none;
+    
+}
+.box2 {
+    grid-area: box2;
+    background-color: #fff;
+    display: inline;
+    overflow: hidden;
+}
+.moneyD{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    height: 30%;
+    background: linear-gradient(to bottom,#2af355,#aaffbc);
+    box-shadow: 5px 0 20px #cafdd5;
+}
+.moneyD p:nth-child(1){
+    color: #28a745;
+    position: absolute;
+    top: -5px;;
+    left: 10px;
+    font: 1em sans-serif;
+    opacity: 0.8;
+
+}
+.moneyD p:nth-child(2){
+    color: #28a745;
+    font: 2.3em sans-serif;
+}
+
+.moneyRoom{
+    padding: 5px;
+    height: 30%;
+}
+.moneyRoom .mRoom{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px ;
+    border-left:2px solid rgb(147, 18, 222,0.2) ;
+}
+
+.moneyRoom .mRoom div{
+    display: flex;
+    gap: 2px;
+    justify-content: space-between;
+}
+.moneyRoom .mRoom div p:nth-child(2){
+    opacity: 0.6;
+}
+
+.moneyFood{
+    padding: 5px;
+    height: 40%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.moneyFood .FoodImage{
+    width: 85%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    border: 0.1em solid gold;
+}
+.moneyFood::before{
+    content: 'Hot';
+    position: absolute;
+    text-align: center;
+    padding: 3px 8px;
+    border-radius: 50%;
+    font-size: 1em;
+    z-index: 10000;
+    top: 5px;
+    left:5px;
+    background: #cafdd5;
+}
+.moneyFood .FoodImage {
+    position: relative; 
+}
+.moneyFood .FoodImage .Hot {
+    position: absolute;
+    text-align: center;
+    color: white;
+    opacity: 0;
+    width: 90%;
+    top: 50%;
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    background: red;
+}
+
+.moneyFood .FoodImage:hover .Hot {
+    opacity: 1;
+    z-index: 1000;
+    transition: opacity 0.4s;
+    cursor: default;
+    background: rgba(43, 42, 42, 0.433);
+}
+
+.box3 {
+    grid-area: box3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.box4 {
+    grid-area: box4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.box5 {
+    grid-area: box5;
+}
+.box6 {
+    grid-area: box6;
+    flex-direction: column;
+    display: flex;
+    justify-content: end;
+}
+.box7 {
+    grid-area: box7;
+}
+
+.cardItem{
+    width: calc(100%/4);
+    height: 100%;
+    background: white;
+    box-shadow: 2px 2px 5px rgb(0, 0, 0,.1), -2px -2px 5px rgb(0, 0, 0,.1);
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+}
+.cardItem div:nth-child(1) {
+    position: absolute;
+    width: 100px;
+    font-size: 2em;
+    text-align: center;
+    top: -10px;
+    left: 0;
+}
+
+.cardItem div:nth-child(2) {
+    position: absolute;
+    width: 100px;
+    text-align: center;
+    bottom:  8px;
+    opacity: 0.5;
+    left: 0;
+}
+.cardItem span {
+    position: absolute;
+    font-size: 4.3em;
+    top: 5px;
+    right: 10px;
+    opacity: 0.9;
+    color: rgb(64, 169, 255);
+    z-index: 0;
+}

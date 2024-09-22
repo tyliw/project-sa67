@@ -29,3 +29,5 @@ npm install @mui/material @emotion/react @emotion/styled
 npm install @mui/material@^6.1.0 @mui/icons-material
 
 npm install moment
+
+npm i react-chartjs-2

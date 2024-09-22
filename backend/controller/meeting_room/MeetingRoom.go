@@ -80,6 +80,7 @@ func CreateMeetingRoom(c *gin.Context) {
 		Detail:       room.Detail,
 		RoomSize:     room.RoomSize,
 		AirCondition: room.AirCondition,
+		Image:    	  room.Image,
 		Chair:        room.Chair,
 		Type:         room.Type,
 	}
