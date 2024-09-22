@@ -1,5 +1,5 @@
 import { Button, Card, Form, Input, message, Flex, Row, Col } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SignIn } from "../services/https";
 import { SignInInterface } from "../interface/SignIn";
 import logo from "../../assets/logo.png";
@@ -96,15 +96,14 @@ function SignInPages() {
                     >
                       Log in
                     </Button>
-                    Or <a onClick={() => navigate("/signup")}>signup now !</a>
                   </Form.Item>
                 </Form>
               </Col>   
-                <Link to='/login/dashboard'>
+                {/* <Link to='/login/dashboard'>
                     <Button>
                       skip login
                     </Button>
-              </Link>
+              </Link> */}
             </Row>
           </Card>
         </Flex>

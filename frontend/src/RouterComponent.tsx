@@ -7,7 +7,6 @@ import Structure from './food_service/pages/structure/Structure';
 import Edit from './food_service/pages/edit/Edit';
 import Create from './food_service/pages/create/Create';
 import Home from './employee/Home';
-import SignUpPages from './authentication/register/SignUpPages';
 import Booking from './room/booking/pages/booking';
 import CustomerCreate from './room/customer';
 import UserCreate from './employee/UsersCreate';
@@ -24,10 +23,6 @@ const RouterComponent: React.FC = () => {
     {
       path: '/',
       element: <Login />, // เส้นทางหลักคือหน้า Login
-    },
-    {
-      path: '/signup',
-      element: <SignUpPages />, // เส้นทางหลักคือหน้า Login
     },
     {
       path: '/login',

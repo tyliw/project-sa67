@@ -108,26 +108,51 @@ func DeleteEmployee(c *gin.Context) {
 // PATCH /employees/:id
 func UpdateEmployee(c *gin.Context) {
 	var employee entity.Employee
+	var input entity.Employee
 
 	ID := c.Param("id")
 
 	db := config.DB()
+	// ตรวจสอบว่ามีพนักงานอยู่ในระบบหรือไม่
 	result := db.First(&employee, ID)
 	if result.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "id not found"})
 		return
 	}
 
-	if err := c.ShouldBindJSON(&employee); err != nil {
+	// Bind ข้อมูลจาก JSON ที่ส่งเข้ามาใน request body
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request, unable to map payload"})
 		return
 	}
 
+	// ตรวจสอบว่ามีการส่งรหัสผ่านใหม่มาหรือไม่
+	if input.Password != "" {
+		// ทำการ Hash รหัสผ่านใหม่
+		hashedPassword, err := config.HashPassword(input.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Password encryption failed"})
+			return
+		}
+		// บันทึก hashed password
+		employee.Password = hashedPassword
+	}
+
+	// อัปเดตข้อมูลที่เหลือ
+	employee.FirstName = input.FirstName
+	employee.LastName = input.LastName
+	employee.Email = input.Email
+	employee.Gender = input.Gender
+	employee.Date_of_Birth = input.Date_of_Birth
+	employee.Profile = input.Profile
+	employee.PositionID = input.PositionID
+
+	// บันทึกข้อมูลลงฐานข้อมูล
 	result = db.Save(&employee)
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Updated successful"})
+	c.JSON(http.StatusOK, gin.H{"message": "Updated successfully"})
 }

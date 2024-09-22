@@ -20,7 +20,7 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
-import UnknownPorfile from "./assets/Unknown-profile.webp"
+import UnknownProfile from "./assets/Unknown-profile.webp";
 
 const { Option } = Select;
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
@@ -51,11 +51,11 @@ export default function UserCreate() {
   };
 
   const onFinish = async (values: EmployeeInterface) => {
-    // ตรวจสอบว่ามีการอัปโหลดไฟล์หรือไม่
+    // Check if a file has been uploaded
     if (fileList.length > 0 && fileList[0].thumbUrl) {
       values.Profile = fileList[0].thumbUrl;
     } else {
-      values.Profile = UnknownPorfile; // กำหนดค่า default หรือแจ้งเตือนว่าต้องอัปโหลดรูปภาพ
+      values.Profile = UnknownProfile; // Set default value or notify that an image must be uploaded
     }
 
     console.log("Data sent to API:", values);
@@ -71,14 +71,14 @@ export default function UserCreate() {
       } else {
         messageApi.open({
           type: "error",
-          content: "Error !",
+          content: "Error!",
         });
       }
     } catch (error) {
       console.error("Error saving data:", error);
       messageApi.open({
         type: "error",
-        content: "Error !",
+        content: "Error!",
       });
     }
   };
@@ -112,12 +112,12 @@ export default function UserCreate() {
           onFinish={onFinish}
           autoComplete="off"
           className="create-form"
-          style={{ fontWeight: "lighter", boxShadow: "none", borderRadius: 0 }}
+          // style={{ fontWeight: "lighter", boxShadow: "none", borderRadius: 0 }}
         >
           <Row gutter={20} justify="start" style={{ width: "100%" }}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24}>
               <Form.Item
-                label="รูปประจำตัว"
+                label="Profile Picture"
                 name="Profile"
                 valuePropName="fileList"
               >
@@ -136,7 +136,7 @@ export default function UserCreate() {
                   >
                     <div>
                       <PlusOutlined />
-                      <div style={{ marginTop: 8 }}>อัพโหลด</div>
+                      <div style={{ marginTop: 8 }}>Upload</div>
                     </div>
                   </Upload>
                 </ImgCrop>
@@ -145,29 +145,29 @@ export default function UserCreate() {
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="ชื่อจริง"
+                label="First Name"
                 name="FirstName"
-                rules={[{ required: true, message: "กรุณากรอกชื่อ !" }]}
+                rules={[{ required: true, message: "Please enter the first name!" }]}
               >
                 <Input placeholder="Enter first name" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="นามสกุล"
+                label="Last Name"
                 name="LastName"
-                rules={[{ required: true, message: "กรุณากรอกนามสกุล !" }]}
+                rules={[{ required: true, message: "Please enter the last name!" }]}
               >
                 <Input placeholder="Enter last name" />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="อีเมล"
+                label="Email"
                 name="Email"
                 rules={[
-                  { type: "email", message: "รูปแบบอีเมลไม่ถูกต้อง!" },
-                  { required: true, message: "กรุณากรอกอีเมล !" },
+                  { type: "email", message: "Invalid email format!" },
+                  { required: true, message: "Please enter the email!" },
                 ]}
               >
                 <Input placeholder="Enter email" />
@@ -175,13 +175,12 @@ export default function UserCreate() {
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="รหัสผ่าน"
+                label="Password"
                 name="password"
                 rules={[
                   {
                     required: true,
-
-                    message: "กรุณากรอกรหัสผ่าน !",
+                    message: "Please enter the password!",
                   },
                 ]}
               >
@@ -190,9 +189,9 @@ export default function UserCreate() {
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="เพศ"
+                label="Gender"
                 name="Gender"
-                rules={[{ required: true, message: "กรุณาระบุเพศ !" }]}
+                rules={[{ required: true, message: "Please specify the gender!" }]}
               >
                 <Select placeholder="Select gender" allowClear>
                   <Option value="Male">Male</Option>
@@ -203,9 +202,9 @@ export default function UserCreate() {
             </Col>
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="วัน/เดือน/ปี เกิด"
+                label="Date of Birth"
                 name="Date_of_Birth"
-                rules={[{ required: true, message: "กรุณาเลือกวันเกิด !" }]}
+                rules={[{ required: true, message: "Please select the date of birth!" }]}
               >
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
@@ -213,8 +212,8 @@ export default function UserCreate() {
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
                 name="PositionID"
-                label="ตำแหน่ง"
-                rules={[{ required: true, message: "กรุณาระบุตำแหน่ง !" }]}
+                label="Position"
+                rules={[{ required: true, message: "Please select a position!" }]}
               >
                 <Select placeholder="Select a position" allowClear>
                   {positions.map((item) => (

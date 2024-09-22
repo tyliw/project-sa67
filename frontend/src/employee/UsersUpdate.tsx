@@ -27,16 +27,19 @@ export default function UsersUpdate() {
       ...employee,
       ...values,
       Date_of_Birth: values.Date_of_Birth ? dayjs(values.Date_of_Birth).toISOString() : "",
-      Profile: fileList.length > 0 ? fileList[0].thumbUrl : employee?.Profile, // Use new profile image or keep old one
+      PositionID: Number(values.PositionID),
+      Profile: fileList.length > 0 && fileList[0].thumbUrl ? fileList[0].thumbUrl : employee?.Profile || "",
     };
 
-    console.log("updatedEmployee: ", updatedEmployee)
+    delete updatedEmployee.Position;
+
+    console.log("Updated employee before API call: ", updatedEmployee);
     try {
-      const res = await UpdateEmployee(updatedEmployee.ID, updatedEmployee);
+      const res = await UpdateEmployee(Number(id), updatedEmployee);
       if (res) {
         messageApi.success("Update successful!");
         setTimeout(() => {
-          navigate("/login/employee"); // เปลี่ยนเส้นทางไปหน้าแรก
+          navigate("/login/employee");
         }, 2000);
       } else {
         messageApi.error("Update failed!");
@@ -68,12 +71,12 @@ export default function UsersUpdate() {
           LastName: res.LastName,
           Gender: res.Gender,
           Email: res.Email,
+          // Password: res.Password,
           Date_of_Birth: dayjs(res.Date_of_Birth),
           PositionID: res.PositionID,
         });
 
-        // Convert the existing profile URL to UploadFile type
-        setFileList(res.Profile ? [{ uid: '-1', name: 'profile-image', url: res.Profile }] : []); 
+        setFileList(res.Profile ? [{ uid: '-1', name: 'profile-image', url: res.Profile }] : []);
       }
     } catch (error) {
       console.error("Error fetching employee:", error);
@@ -115,12 +118,11 @@ export default function UsersUpdate() {
           onFinish={onFinish}
           autoComplete="off"
           style={{ boxShadow: "none", borderRadius: 0 }}
-          
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={24}>
               <Form.Item
-                label="รูปประจำตัว"
+                label="Profile Picture"
                 name="Profile"
                 valuePropName="fileList"
               >
@@ -129,13 +131,13 @@ export default function UsersUpdate() {
                     fileList={fileList}
                     onChange={onChange}
                     onPreview={onPreview}
-                    beforeUpload={() => false} // Prevent automatic upload
+                    beforeUpload={() => false}
                     maxCount={1}
                     listType="picture-card"
                   >
                     <div>
                       <PlusOutlined />
-                      <div style={{ marginTop: 8 }}>อัพโหลด</div>
+                      <div style={{ marginTop: 8 }}>Upload</div>
                     </div>
                   </Upload>
                 </ImgCrop>
@@ -143,45 +145,54 @@ export default function UsersUpdate() {
             </Col>
             <Col xs={24} sm={24} md={12}>
               <Form.Item
-                label="ชื่อจริง"
+                label="First Name"
                 name="FirstName"
-                rules={[{ required: true, message: "กรุณากรอกชื่อ!" }]}
+                rules={[{ required: true, message: "Please enter your first name!" }]}
               >
                 <Input />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12}>
               <Form.Item
-                label="นามสกุล"
+                label="Last Name"
                 name="LastName"
-                rules={[{ required: true, message: "กรุณากรอกนามสกุล!" }]}
+                rules={[{ required: true, message: "Please enter your last name!" }]}
               >
                 <Input />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12}>
               <Form.Item
-                label="อีเมล"
+                label="Email"
                 name="Email"
-                rules={[{ type: "email", message: "รูปแบบอีเมลไม่ถูกต้อง!" }, { required: true, message: "กรุณากรอกอีเมล!" }]}
+                rules={[{ type: "email", message: "Invalid email format!" }, { required: true, message: "Please enter your email!" }]}
               >
                 <Input />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12}>
               <Form.Item
-                label="วัน/เดือน/ปี เกิด"
+                label="Password"
+                name="Password"
+                rules={[{ required: true, message: "Please enter your password!" }]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12}>
+              <Form.Item
+                label="Date of Birth"
                 name="Date_of_Birth"
-                rules={[{ required: true, message: "กรุณาเลือกวันเกิด!" }]}
+                rules={[{ required: true, message: "Please select your date of birth!" }]}
               >
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12}>
               <Form.Item
-                label="เพศ"
+                label="Gender"
                 name="Gender"
-                rules={[{ required: true, message: "กรุณาระบุเพศ!" }]}
+                rules={[{ required: true, message: "Please specify your gender!" }]}
               >
                 <Select allowClear>
                   <Option value="Male">Male</Option>
@@ -192,9 +203,9 @@ export default function UsersUpdate() {
             </Col>
             <Col xs={24} sm={24} md={12}>
               <Form.Item
-                label="ตำแหน่ง"
+                label="Position"
                 name="PositionID"
-                rules={[{ required: true, message: "กรุณาเลือกตำแหน่ง!" }]}
+                rules={[{ required: true, message: "Please select a position!" }]}
               >
                 <Select allowClear>
                   {positions.map((position) => (
@@ -211,17 +222,16 @@ export default function UsersUpdate() {
               <Form.Item>
                 <Space>
                   <Button onClick={() => navigate("/login/employee")} htmlType="button">
-                    ยกเลิก
+                    Cancel
                   </Button>
                   <Button type="primary" htmlType="submit">
-                    ยืนยัน
+                    Confirm
                   </Button>
                 </Space>
               </Form.Item>
             </Col>
           </Row>
         </Form>
-     
       </Container>
     </React.Fragment>
   );

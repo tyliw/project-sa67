@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { PieChartOutlined, UserOutlined, TableOutlined } from '@ant-design/icons';
-import { Button, Layout, Menu, MenuProps, theme } from 'antd';
+import { Layout, Menu, MenuProps, theme } from 'antd';
 import { MdFastfood, MdOutlinePayment, MdOutlineBedroomParent, MdMeetingRoom } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoReceiptOutline } from "react-icons/io5";
 import logo from "./assets/logo.png";
-import './index.css';
 
 const { Sider, Content } = Layout;
 
@@ -43,6 +42,7 @@ const items: MenuItem[] = [
     getItem(<Link to="/login/payment">Payment</Link>, '8', <MdOutlinePayment />),
     getItem(<Link to="/login/payment_history">History</Link>, '9', <IoReceiptOutline />),
   ]),
+  getItem(<Link to="/">Log out</Link>, '10', <RiLogoutBoxLine />),
 ];
 
 const App: React.FC = () => {
@@ -85,12 +85,6 @@ const App: React.FC = () => {
             items={items}
           />
           <div className='container-logout-button'>
-            <Link to="/">
-              <Button className='logout-button'>
-                <RiLogoutBoxLine />
-                logout
-              </Button>
-            </Link>
           </div>
         </Sider>
         <Layout>
