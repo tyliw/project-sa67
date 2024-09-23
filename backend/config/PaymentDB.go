@@ -15,7 +15,7 @@ func SetupPaymentDatabase() {
         BookingID:     1,
         TotalAmount:   500,
         PaymentDate:   time.Now(),
-        PaymentMethod: "Credit Card",
+        PaymentMethod: "Credit/Debit Card",
     }
     db.Create(&payment)
 
