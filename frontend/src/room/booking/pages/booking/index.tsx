@@ -21,10 +21,11 @@ import {
   GetCustomers,
   UpdateRoom,
 } from "../../services/https";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RoomTypesInterface } from "../../interfaces/IRoomTypes";
 import { RoomInterface } from "../../interfaces/IRoom";
 import moment from "moment";
+import { EmployeeInterface } from "../../../../employee/interfaces/IEmployee";
 const { Option } = Select;
 function CustomerCreate() {
   const navigate = useNavigate();
@@ -40,6 +41,12 @@ function CustomerCreate() {
 
   const [dayDifference, setDayDifference] = useState<number | null>(null); // State to store day difference
   const [totalPrice, setTotalPrice] = useState<number | null>(null); // State to store total price
+
+  const location = useLocation(); // <-- Use useLocation to get state
+  // const { employeeData }: { employeeData?: EmployeeInterface } = location.state || {};
+  const [employeeData, setEmployeeData] = useState<EmployeeInterface | null>(null);
+
+  console.log("employeeData for log in: ", employeeData)
 
   const onFinish = async (values: BookingInterface) => {
     const formattedValues: BookingInterface = {
@@ -59,6 +66,7 @@ function CustomerCreate() {
       TotalPrice: totalPrice, // Add totalPrice from the state
       CustomerID: formattedValues.CustomerID,
       RoomID: formattedValues.RoomID,
+      EmployeeID: employeeData?.ID
     };
 
     const res = await CreateBooking(bookingData);
@@ -129,6 +137,14 @@ function CustomerCreate() {
   };
 
   useEffect(() => {
+    const storedEmployeeData = localStorage.getItem("employeeData");
+
+    if (location.state?.employeeData) {
+      setEmployeeData(location.state.employeeData);
+    } else if (storedEmployeeData) {
+      setEmployeeData(JSON.parse(storedEmployeeData));
+    }
+
     getTypeRooms();
     getRooms();
     getCustomers();

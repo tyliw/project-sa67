@@ -1,3 +1,4 @@
+import { EmployeeInterface } from '../../../employee/interfaces/IEmployee';
 import { CustomersInterface } from './ICustomer';
 import { RoomInterface } from './IRoom';
 
@@ -11,5 +12,6 @@ export interface BookingInterface {
   Customer?: CustomersInterface;
   RoomID: number | null;
   Room?: RoomInterface;
-  
+  EmployeeID?: number
+  Employee?: EmployeeInterface
 }

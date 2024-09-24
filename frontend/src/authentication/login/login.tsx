@@ -29,10 +29,11 @@ function SignInPages() {
         // ดึงข้อมูลของพนักงาน
         const emp = await GetEmployeeById(res.data.id);
         console.log("emp values from SignIn: ", emp);
+        localStorage.setItem("employeeData", JSON.stringify(emp));
   
         // ส่งข้อมูลไปยังหน้าใหม่
         setTimeout(() => {
-          navigate("/login/dashboard", { state: {employeeData: emp} } );
+          navigate("/login/room", { state: {employeeData: emp} } );
         }, 750);
       } else {
         messageApi.error(res?.data?.error || "Unknown error occurred");

@@ -69,7 +69,7 @@ const RouterComponent: React.FC = () => {
         { path: 'receipt', element: <Receipt /> },
         { path: 'paymentmethod', element: <PaymentMethod /> },
         { path: 'payment_history', element: <PaymentHistory /> },
-        { path: 'logout', element: <h2>Logout</h2> },
+
         { path: '*', element: <h2>404 - Not Found</h2> }, // เส้นทาง 404 สำหรับเส้นทางที่ไม่พบ
       ],
     },

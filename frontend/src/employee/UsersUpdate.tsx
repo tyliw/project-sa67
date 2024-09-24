@@ -32,21 +32,26 @@ export default function UsersUpdate() {
       PositionID: Number(values.PositionID),
       Profile: fileList.length > 0 && fileList[0].thumbUrl ? fileList[0].thumbUrl : employee?.Profile || "",
     };
-
+  
     delete updatedEmployee.Position;
-
-    // ถ้า newPassword ถูกกรอกให้รวมเข้าไปในข้อมูลที่จะส่งไป
+  
     if (newPassword) {
       updatedEmployee.Password = newPassword;
+    } else {
+      updatedEmployee.Password = "";
     }
-
+  
     console.log("Updated employee before API call: ", updatedEmployee);
     try {
       const res = await UpdateEmployee(Number(id), updatedEmployee);
       if (res) {
+        // Update localStorage with the new employee data
+        localStorage.setItem("employeeData", JSON.stringify(updatedEmployee));
+        
         messageApi.success("Update successful!");
         setTimeout(() => {
           navigate("/login/employee");
+          window.location.reload()
         }, 2000);
       } else {
         messageApi.error("Update failed!");
@@ -56,6 +61,7 @@ export default function UsersUpdate() {
       messageApi.error("An error occurred while updating the data!");
     }
   };
+  
 
   const getPositions = async () => {
     try {
@@ -71,6 +77,7 @@ export default function UsersUpdate() {
   const getUserById = async () => {
     try {
       const res = await GetEmployeeById(Number(id));
+      localStorage.setItem("employeeData", JSON.stringify(res));
       if (res) {
         setEmployee(res);
         form.setFieldsValue({
