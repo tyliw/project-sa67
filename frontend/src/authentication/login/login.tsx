@@ -2,7 +2,7 @@ import { Button, Card, Form, Input, message, Flex, Row, Col } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SignIn } from "../services/https";
 import { SignInInterface } from "../interface/SignIn";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/hotel_logo.png";
 import { GetEmployeeById } from "../../employee/services/https";
 import './index.css'
 
@@ -53,7 +53,7 @@ function SignInPages() {
               <Col xs={24} sm={24} md={24} lg={24} xl={24} style={{display:"flex", alignItems:"center", justifyContent:"center" }}>
                 <img
                   alt="logo"
-                  style={{ width: "80%" }}
+                  style={{ width: "80%", height:"200px", objectFit:"cover" }}
                   src={logo}
                   className="images-logo"
                 />
@@ -65,7 +65,6 @@ function SignInPages() {
                   onFinish={onFinish}
                   autoComplete="off"
                   layout="vertical"
-                  style={{borderRadius:0, boxShadow:'none'}}
                 >
                   <Form.Item
                     label="Email"

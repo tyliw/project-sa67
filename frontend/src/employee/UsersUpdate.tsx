@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, Input, Button, DatePicker, Select, message, Row, Col, Space, Upload } from "antd";
+import { Form, Input, Button, DatePicker, Select, message, Row, Col, Space, Upload, Modal } from "antd";
 import { EmployeeInterface } from "./interfaces/IEmployee";
 import { PositionInterface } from "./interfaces/IPosition";
 import { UpdateEmployee, GetPositions, GetEmployeeById } from "./services/https";
@@ -21,6 +21,8 @@ export default function UsersUpdate() {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const { id } = useParams();
+  const [resetModalVisible, setResetModalVisible] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
 
   const onFinish = async (values: EmployeeInterface) => {
     const updatedEmployee = {
@@ -32,6 +34,11 @@ export default function UsersUpdate() {
     };
 
     delete updatedEmployee.Position;
+
+    // ถ้า newPassword ถูกกรอกให้รวมเข้าไปในข้อมูลที่จะส่งไป
+    if (newPassword) {
+      updatedEmployee.Password = newPassword;
+    }
 
     console.log("Updated employee before API call: ", updatedEmployee);
     try {
@@ -71,7 +78,6 @@ export default function UsersUpdate() {
           LastName: res.LastName,
           Gender: res.Gender,
           Email: res.Email,
-          // Password: res.Password,
           Date_of_Birth: dayjs(res.Date_of_Birth),
           PositionID: res.PositionID,
         });
@@ -107,11 +113,31 @@ export default function UsersUpdate() {
     imgWindow?.document.write(image.outerHTML);
   };
 
+  const handleResetPassword = () => {
+    setResetModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setResetModalVisible(false);
+    // หากต้องการรีเซ็ตรหัสผ่านใหม่ สามารถทำได้ที่นี่
+    // เช่น ตรวจสอบว่ารหัสผ่านใหม่ไม่ว่างเปล่า
+    if (newPassword) {
+      messageApi.success("Password reset successfully!");
+      // ที่นี่คุณสามารถทำการบันทึกรหัสผ่านใหม่ได้
+    } else {
+      messageApi.error("Please enter a new password!");
+    }
+  };
+
+  const handleCancel = () => {
+    setResetModalVisible(false);
+  };
+
   return (
     <React.Fragment>
       {contextHolder}
       <CssBaseline />
-      <Container maxWidth="sm" sx={{ p: 2 }} >
+      <Container maxWidth="sm" sx={{ p: 2 }}>
         <Form
           form={form}
           layout="vertical"
@@ -170,7 +196,7 @@ export default function UsersUpdate() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={12}>
+            {/* <Col xs={24} sm={24} md={12}>
               <Form.Item
                 label="Password"
                 name="Password"
@@ -178,7 +204,7 @@ export default function UsersUpdate() {
               >
                 <Input.Password />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col xs={24} sm={24} md={12}>
               <Form.Item
                 label="Date of Birth"
@@ -221,6 +247,9 @@ export default function UsersUpdate() {
             <Col>
               <Form.Item>
                 <Space>
+                <Button type="danger" onClick={handleResetPassword} style={{ borderColor: 'red', color: 'red' }}>
+                    Reset Password
+                  </Button>
                   <Button onClick={() => navigate("/login/employee")} htmlType="button">
                     Cancel
                   </Button>
@@ -232,6 +261,19 @@ export default function UsersUpdate() {
             </Col>
           </Row>
         </Form>
+
+        <Modal
+          title="Reset Password"
+          visible={resetModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <Input.Password
+            placeholder="Enter new password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </Modal>
       </Container>
     </React.Fragment>
   );

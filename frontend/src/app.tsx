@@ -6,7 +6,7 @@ import { Layout, Menu, MenuProps, theme } from 'antd';
 import { MdFastfood, MdOutlinePayment, MdOutlineBedroomParent, MdMeetingRoom } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoReceiptOutline } from "react-icons/io5";
-import logo from "./assets/logo.png";
+import logo from "./assets/hotel_logo.png";
 
 const { Sider, Content } = Layout;
 
@@ -60,6 +60,8 @@ const App: React.FC = () => {
  const getSelectedKey = () => {
   if (location.pathname === "/login/payment_history") return '9'; // ตรวจสอบ payment_history ก่อน
   if (location.pathname === "/login/payment") return '8'; // ตรวจสอบ payment หลัง
+  if (location.pathname.includes("/login/paymentmethod")) return '8';
+  if (location.pathname.includes("/login/receipt")) return '8';
   if (location.pathname.includes("/login/room")) return '2';
   if (location.pathname.includes("/login/customer")) return '3';
   if (location.pathname.includes("/login/meeting-rooms")) return '4';
@@ -75,7 +77,7 @@ const App: React.FC = () => {
     <>
       <Layout style={{ minHeight: '100vh' }}>
         <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-          <div className="logo">
+          <div className="logo" style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
             <img
                 src={logo}
                 alt="Logo"
