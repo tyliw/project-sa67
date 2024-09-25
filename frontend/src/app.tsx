@@ -93,7 +93,7 @@ const items: MenuItem[] = [
       <Layout style={{ minHeight: '100vh' }}>
         <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <div className="logo" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <img src={logo} alt="Logo" style={{ width: "80%", margin: "10px" }} />
+            <img src={logo} alt="Logo" style={{ width: "120%", margin: "5px"}} />
           </div>
           <hr />
           <div
