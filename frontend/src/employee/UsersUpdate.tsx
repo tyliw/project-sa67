@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Form, Input, Button, DatePicker, Select, message, Row, Col, Space, Upload, Modal } from "antd";
 import { EmployeeInterface } from "./interfaces/IEmployee";
 import { PositionInterface } from "./interfaces/IPosition";
@@ -24,6 +24,9 @@ export default function UsersUpdate() {
   const [resetModalVisible, setResetModalVisible] = useState(false);
   const [newPassword, setNewPassword] = useState("");
 
+  const location = useLocation();
+  const [employeeData, setEmployeeData] = useState<EmployeeInterface | null>(null);
+
   const onFinish = async (values: EmployeeInterface) => {
     const updatedEmployee = {
       ...employee,
@@ -46,7 +49,14 @@ export default function UsersUpdate() {
       const res = await UpdateEmployee(Number(id), updatedEmployee);
       if (res) {
         // Update localStorage with the new employee data
-        localStorage.setItem("employeeData", JSON.stringify(updatedEmployee));
+        if (employeeData?.ID == updatedEmployee.ID) {
+          console.log("employeeData id: ", employeeData?.ID)
+          console.log("updatedEmployee id: ", updatedEmployee.ID)
+          localStorage.setItem("employeeData", JSON.stringify(updatedEmployee));
+        }else {
+          console.log("no change employee !!!")
+          localStorage.setItem("employeeData", JSON.stringify(employeeData));
+        }
         
         messageApi.success("Update successful!");
         setTimeout(() => {
@@ -97,6 +107,13 @@ export default function UsersUpdate() {
   };
 
   useEffect(() => {
+    const storedEmployeeData = localStorage.getItem("employeeData");
+    if (location.state?.employeeData) {
+      setEmployeeData(location.state.employeeData);
+    } else if (storedEmployeeData) {
+      setEmployeeData(JSON.parse(storedEmployeeData));
+    }
+
     getPositions();
     getUserById();
   }, [id]);
