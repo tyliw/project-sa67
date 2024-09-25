@@ -34,7 +34,6 @@ function Index() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [bookingIdToCancel, setBookingIdToCancel] = useState<number | null>(null);
-    const [imageSrc, setImageSrc] = useState('');
 
     const onClickSwitchA = () => {
         setSwitchRoom(true);
@@ -59,6 +58,7 @@ function Index() {
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setSelectedDate(event.target.value);
     };
+
     const showConfirmModal = (id: number) => {
         setBookingIdToCancel(id);
         Modal.confirm({
@@ -93,9 +93,6 @@ function Index() {
             const res = await GetMeetingRooms();
             if (res) {
                 setRooms(res);              
-                res.forEach( room => {
-                    console.log(room.Image);
-                });
             }
             
         } catch (error) {
@@ -111,7 +108,11 @@ function Index() {
             setLoading(true);
             const res = await GetBooking();
             if (res) {
-                setBooking(res);
+                const filteredBookings = res.filter((booking: BookingInterface) => 
+                    moment(booking.DateTime).format('YYYY-MM-DD') === selectedDate
+                );
+    
+                setBooking(filteredBookings);
             }
         } catch (error) {
             console.error('Failed to fetch bookings:', error);
@@ -120,7 +121,6 @@ function Index() {
             setLoading(false);
         }
     };
-
     const fetchCustomer = async () => {
         try {
             setLoading(true);
@@ -151,28 +151,14 @@ function Index() {
         }
     };
 
-    const onClickCancel = async (value: number) => {
-        try {
-            console.log('Cancel booking with ID:', value);
-            const res = await DeleteBookingByID(value);
-            if (res) {
-                console.log('Booking canceled successfully:', res);
-                fetchBooking(); // Refresh bookings
-            } else {
-                console.error('Failed to cancel booking');
-                setError('Failed to cancel booking.');
-            }
-        } catch (error) {
-            console.error('Failed to cancel booking:', error);
-            setError('An error occurred while canceling the booking.');
-        }
-    };
+   
 
     useEffect(() => {
-        fetchRooms();
+        fetchBooking();
     }, [selectedDate]);
 
     useEffect(() => {
+        fetchRooms();
         fetchBooking();
         fetchCustomer();
         fetchDuration();
@@ -211,7 +197,7 @@ function Index() {
                                     key={room.ID}
                                     style={{ 
                                         backgroundImage: `url(${room.Image})`, 
-                                        backgroundSize: 'cover',      // ปรับขนาดภาพพื้นหลังให้ครอบคลุมพื้นที่
+                                        backgroundSize: 'cover',      
                                         backgroundPosition: 'center', // จัดตำแหน่งภาพให้อยู่ตรงกลาง
                                         position: 'relative',
                                     }}     
@@ -233,8 +219,8 @@ function Index() {
                     {showPopup && selectedRoom &&
                         <div className='BookingPopup'>
                             <div className='BookingSubmit'>
-                                <Booking room={selectedRoom}/>
-                                <div className='CloseBooking' onClick={onClickClosePopup}>
+                                <Booking room={selectedRoom} closePopup={onClickClosePopup} />
+                                <div className='CloseBooking' onClick={onClickClosePopup} >
                                     <GrClose/>
                                 </div>
                             </div>

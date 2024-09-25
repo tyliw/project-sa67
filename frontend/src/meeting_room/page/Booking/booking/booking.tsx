@@ -14,7 +14,7 @@ const { Option } = Select;
 
 interface bookingNew {
   room: MeetingInterface; // Room data to edit
-  customer: CustomerInterface;
+  customer?: CustomerInterface;
   closePopup?: () => void; // Function to close the popup
   handleDelete?: () => void; // Function to handle delete
 }
@@ -23,7 +23,7 @@ interface bookingByMeetingRoomID{
   StartTime?:string;
   EndTime?:string;
 }
-const Booking: React.FC<bookingNew> = ({ room }) => {
+const Booking: React.FC<bookingNew> = ({ room, closePopup }) => {
   const [roomID] = useState<number | undefined>(room?.ID);
   const [customer, setCustomer] = useState<number | undefined>();
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
@@ -39,8 +39,9 @@ const Booking: React.FC<bookingNew> = ({ room }) => {
     if (date) {
       const dateFormat = encodeURIComponent(date.format('YYYY-MM-DDTHH:mm:ssZ'));
       setDateTime(dateFormat);
-      console.log("===> ",dateFormat);
       setSelectedDateM(dateFormat);
+      console.log("--->ID ",roomID)
+      console.log("--->",dateFormat)
       console.log(duration)
     } else {
       setSelectedDateM(null); 
@@ -70,7 +71,6 @@ const Booking: React.FC<bookingNew> = ({ room }) => {
       try {
         const response = await GetDuration();
         setDuration(response)
-        console.log("--------> ",duration)
       } catch (error) {
         console.error("Error fetching booking:", error);
       }
@@ -82,8 +82,7 @@ const Booking: React.FC<bookingNew> = ({ room }) => {
     const fetchDurtionDate = async () => {
       try {
         if (dateTime) {
-          const response = await GetDurationByDate(dateTime);
-          console.log(">>>>>>>>> ",response)
+          const response = await GetDurationByDate(dateTime,roomID);
           if (response) {
             setDuration(response);
             setAvailableDurations(response);
@@ -138,7 +137,11 @@ const Booking: React.FC<bookingNew> = ({ room }) => {
       if (res) {
         antdMessage.success(res.message || "Booking created successfully.");
         setTimeout(() => navigate("/login/booking-meeting-rooms"), 2000);
-        
+        if (typeof closePopup === "function") {
+          closePopup();
+        } else {
+          console.warn("closePopup is not a function");
+        } 
       } else {
         antdMessage.error(res.message || "Failed to create booking.");
       }
@@ -180,17 +183,6 @@ const Booking: React.FC<bookingNew> = ({ room }) => {
           boxShadow:'none'
         }}
       >
-      
-        {/* <Form.Item
-          name="RoomName"
-          label="Room Name"
-          rules={[{ required: true, message: 'Room Name is required' }]}
-          style={{width:'350px',marginBottom:'12px' }}
-        >
-          <Input placeholder="Room Name" disabled 
-            style={{width:'100%'}}  
-          />
-        </Form.Item> */}
 
         <Form.Item
           name="First_Name"

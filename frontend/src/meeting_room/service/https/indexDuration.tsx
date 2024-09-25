@@ -23,13 +23,13 @@ async function GetDuration() {
   return res;
 }
 
-async function GetDurationByDate(Date: String | undefined) {
+async function GetDurationByDate(Date: String | undefined,id:number) {
     const requestOptions = {
       method: "GET"
     };
   
     try {
-      const res = await fetch(`${apiUrl}/bookingMeetingRoom/Date?date_time=${Date}`, requestOptions);
+      const res = await fetch(`${apiUrl}/bookingMeetingRoom/${id}/Date?date_time=${Date}`, requestOptions);
   
       // Check if response status is 204 (No Content)
       if (res.status === 204) {

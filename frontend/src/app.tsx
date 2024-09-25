@@ -27,6 +27,21 @@ function getItem(
   } as MenuItem;
 }
 
+const App: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+  const [employeeData, setEmployeeData] = useState<EmployeeInterface | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+  const storedEmployeeData = localStorage.getItem("employeeData");
+  if (location.state?.employeeData) {
+    setEmployeeData(location.state.employeeData);
+  } else if (storedEmployeeData) {
+    setEmployeeData(JSON.parse(storedEmployeeData));
+  }
+}, [location.state]);
+
 const items: MenuItem[] = [
   getItem(<Link to="/login/dashboard">Dashboard</Link>, '1', <PieChartOutlined />),
   getItem('Room', 'sub1', undefined, [
@@ -41,7 +56,8 @@ const items: MenuItem[] = [
     getItem(<Link to="/login/food-service">Food Service</Link>, '5', <MdFastfood />),
     getItem(<Link to="/login/manage-data">Manage Data</Link>, '6', <TableOutlined />),
   ]),
-  getItem(<Link to="/login/employee">Employee</Link>, '7', <UserOutlined />),
+  // ปรับปรุงส่วนนี้
+  ...(employeeData?.PositionID === 4 ? [getItem(<Link to="/login/employee">Employee</Link>, '7', <UserOutlined />)] : []),
   getItem('Payment', 'sub3', undefined, [
     getItem(<Link to="/login/payment">Payment</Link>, '8', <MdOutlinePayment />),
     getItem(<Link to="/login/payment_history">History</Link>, '9', <IoReceiptOutline />),
@@ -49,20 +65,9 @@ const items: MenuItem[] = [
   getItem(<Link to="/">Log out</Link>, '11', <RiLogoutBoxLine />),
 ];
 
-const App: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();
-  const [employeeData, setEmployeeData] = useState<EmployeeInterface | null>(null);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedEmployeeData = localStorage.getItem("employeeData");
-    if (location.state?.employeeData) {
-      setEmployeeData(location.state.employeeData);
-    } else if (storedEmployeeData) {
-      setEmployeeData(JSON.parse(storedEmployeeData));
-    }
-  }, [location.state]);
+
+  
 
   const {
     token: { colorBgContainer, borderRadiusLG },
