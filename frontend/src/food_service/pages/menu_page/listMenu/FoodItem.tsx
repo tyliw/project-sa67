@@ -16,19 +16,20 @@ const FoodItem: React.FC<FoodItemProps> = ({ food, isToggled, amount, onToggle, 
   // console.log("Imang Menu :", food.ImageMenu);
   return (
     <div className='food-item'>
-      <button
-        className={`round-buttons ${isToggled ? 'active' : ''}`}
-        onClick={onToggle}
-      >
-        {/* Optional content for button */}
-      </button>
+      <div className='select-menu' onClick={onToggle}>
+        <button
+          className={`round-buttons ${isToggled ? 'active' : ''}`}
+          
+        >
+          {/* Optional content for button */}
+        </button>
 
-      <img className='image-menu' src={food.ImageMenu} alt="" />
+        <img className='image-menu' src={food.ImageMenu} alt="" />
 
-      <div className='menu-list'>
-        <h1>{food.MenuList} - {food.Price.toFixed(2)} ฿</h1>
-        <p>- {food.Description}</p>
-        
+        <div className='menu-list'>
+          <h1>{food.MenuList} - {food.Price.toFixed(2)} ฿</h1>
+          <p>- {food.Description}</p>
+        </div>
       </div>
       {/* <p>- {food.description}</p> */}
       <AmountControl amount={amount} onAmountChange={onAmountChange} />

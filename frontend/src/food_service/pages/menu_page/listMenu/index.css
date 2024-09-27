@@ -24,8 +24,8 @@
 }
 
 .food-item {
-    display: grid;
-    grid-template-columns: 50px 180px 320px auto;
+    display: flex;
+    /* grid-template-columns: 320px auto; */
     gap: 10px;
     /* column-gap: 20px; */
     align-items: center;
@@ -39,6 +39,13 @@
     font-size: 16px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: normal;
+}
+
+.select-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    cursor: pointer;
 }
 
 .food-list p {

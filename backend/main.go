@@ -79,7 +79,7 @@ func main() {
 		router.DELETE("/customerMeetingRoom/:id", meeting_room.DeleteCustomerMeetingRoom)
 		// duration with booking
 		router.GET("/duration",meeting_room.ListDuration)
-		router.GET("/bookingMeetingRoom/Date",meeting_room.GetDurationByBookingID)
+		router.GET("/bookingMeetingRoom/:id/Date",meeting_room.GetDurationByBookingID)
 		// bookingMeetingRoom Routes
 		router.GET("/bookingMeetingRoom", meeting_room.ListBookingMeetingRoom)
 		router.GET("/bookingMeetingRoom/:id", meeting_room.GetBookingMeetingRoom) // Corrected route name
